@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useRef } from "react";
 import throttle from "lodash.throttle";
-import { Point } from "../data/type";
+import { MouseTouchEvent, Point } from "../data/type";
 import { __MOUSE_LEFT_KEY_BUTTON__ } from "../data/constants";
 import AppContext from "../AppContext";
 import Node, { NodeHandle } from "./graph/Node";
@@ -22,8 +22,8 @@ const SvgContainer = () => {
   const viewHeight = useMemo(() => window.innerHeight * scale, [scale]);
 
   const handleMouseDown = useCallback(
-    ({ clientX, clientY, button, target }: React.MouseEvent<SVGSVGElement>) => {
-      if (button !== __MOUSE_LEFT_KEY_BUTTON__) return;
+    ({ clientX, clientY, button, target }: MouseTouchEvent) => {
+      if (button !== undefined && button !== __MOUSE_LEFT_KEY_BUTTON__) return;
       if (target !== containerRef.current) return;
       prevClickPoint.current = { x: clientX, y: clientY };
       isDragging.current = true;
@@ -32,14 +32,15 @@ const SvgContainer = () => {
   );
 
   const handleMouseMove = useCallback(
-    (e: React.MouseEvent<SVGSVGElement>) => {
+    (e: MouseTouchEvent) => {
       if (selectedNodeRef.current) {
         selectedNodeRef.current.handleMouseMove(e);
         return;
       }
-      if (e.target !== containerRef.current) return;
+
+      const { clientX, clientY, target } = e;
+      if (target !== containerRef.current) return;
       if (isDragging.current) {
-        const { clientX, clientY } = e;
         setCenter((prev) => {
           const ret = {
             x: prev.x - (clientX - prevClickPoint.current.x) * scale,
@@ -54,7 +55,7 @@ const SvgContainer = () => {
     [setCenter, scale]
   );
 
-  const handleMouseUp = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+  const handleMouseUp = useCallback((e: MouseTouchEvent) => {
     if (selectedNodeRef.current) {
       selectedNodeRef.current.handleMouseUp(e);
       selectedNodeRef.current = null;
@@ -76,6 +77,33 @@ const SvgContainer = () => {
         }
       }, 50),
     [zoomIn, zoomOut]
+  );
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<SVGSVGElement>) => {
+      if (e.touches.length === 1) {
+        handleMouseDown(e.touches[0]);
+      }
+    },
+    [handleMouseDown]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent<SVGSVGElement>) => {
+      if (e.touches.length === 1) {
+        handleMouseMove(e.touches[0]);
+      }
+    },
+    [handleMouseMove]
+  );
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent<SVGSVGElement>) => {
+      if (e.touches.length === 1) {
+        handleMouseUp(e.touches[0]);
+      }
+    },
+    [handleMouseUp]
   );
 
   const handleCircleMouseDown = (
@@ -101,6 +129,9 @@ const SvgContainer = () => {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       <defs>
         <marker

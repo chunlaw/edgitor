@@ -7,12 +7,12 @@ const Branding = () => (
       position: "fixed",
       right: 0,
       bottom: 0,
-      mb: 6,
-      mr: 1,
+      mb: 8,
+      mr: 2,
     }}
   >
     <Typography
-      variant="h2"
+      variant="h4"
       sx={{
         fontFamily: "Cantarell",
         color: "rgba(255, 255, 255, 0.4)",

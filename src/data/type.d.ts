@@ -24,7 +24,7 @@ export type GraphType = "directed" | "undirected";
 
 export type FlipType = "horizontal" | "vertical";
 
-export type GraphArrangement = "Circle" | "Grid";
+export type GraphArrangement = "Circle" | "Grid" | "Tree";
 
 export interface Graph {
   nodes: {
@@ -32,4 +32,11 @@ export interface Graph {
   };
   edges: Array<[string, string] | [string, string, string]>;
   type: GraphType;
+}
+
+interface MouseTouchEvent {
+  clientX: number;
+  clientY: number;
+  button?: number;
+  target: EventTarget;
 }

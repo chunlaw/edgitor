@@ -1,4 +1,10 @@
-import React, { useState, useMemo, useRef, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+  useCallback,
+} from "react";
 import { NodeHandle } from "./components/graph/Node";
 import { ZOOM_MAX_SCALE, ZOOM_MIN_SCALE } from "./data/constants";
 import {
@@ -11,6 +17,7 @@ import {
   FlipType,
   GraphArrangement,
 } from "./data/type";
+import { median } from "./utils";
 
 interface AppContextState {
   scale: number;
@@ -23,6 +30,7 @@ interface AppContextState {
   setScale: React.Dispatch<React.SetStateAction<number>>;
   zoomIn: () => void;
   zoomOut: () => void;
+  resetCenter: () => void;
   updateNode: (node: Node) => void;
   updateGraph: (input: string) => void;
   setGraphType: (type: GraphType) => void;
@@ -40,7 +48,9 @@ export const AppContextProvider = ({
 }) => {
   const [config] = useState<Config>(DAFAULT_CONFIG);
   const nodesRef = useRef<NodeHandle[]>([]);
-  const [graph, setGraph] = useState<Graph>(DEFAULT_GRAPH);
+  const [graph, setGraph] = useState<Graph>(
+    JSON.parse(localStorage.getItem("edgitor-graph") || DEFAULT_GRAPH)
+  );
   const [center, setCenter] = useState<Point>({ x: 0, y: 0 });
   const [scale, setScale] = useState<number>(1);
 
@@ -85,6 +95,18 @@ export const AppContextProvider = ({
       )
     );
   }, [setScale]);
+
+  const resetCenter = useCallback(() => {
+    const _nodesRef = nodesRef.current.filter((v) => v);
+    if (_nodesRef.length === 0) {
+      setCenter({ x: 0, y: 0 });
+    } else {
+      setCenter({
+        x: median(_nodesRef.map((ref) => ref.node.x)),
+        y: median(_nodesRef.map((ref) => ref.node.y)),
+      });
+    }
+  }, [setCenter]);
 
   const updateGraph = useCallback(
     (input: string) => {
@@ -161,13 +183,94 @@ export const AppContextProvider = ({
     const initX = -(c * dx) / 2;
     const initY = -(r * dy) / 2;
     _nodesRef.forEach((ref, i) => {
-      console.log(i, initX + Math.floor(i / r) * dx, initY + (i % c) * dy);
       ref.setCenter({
         x: initX + Math.floor(i / c) * dx,
         y: initY + (i % c) * dy,
       });
     });
   }, [config.radius]);
+
+  const setTreeGraph = useCallback(() => {
+    const _nodesRef = nodesRef.current.filter((v) => v);
+    const nodeCnt = _nodesRef.length;
+    const inDeg: { [label: string]: number } = {};
+    const lv: { [label: string]: number } = {};
+    const vis: { [label: string]: boolean } = {};
+    const eMap: { [label: string]: string[] } = {};
+    graph.edges.forEach(([u, v]) => {
+      if (inDeg[u] === undefined) inDeg[u] = 0;
+      if (inDeg[v] === undefined) inDeg[v] = 0;
+      inDeg[v] += 1;
+      if (eMap[u] === undefined) eMap[u] = [];
+      eMap[u].push(v);
+      vis[u] = false;
+      vis[v] = false;
+    }, {});
+
+    const dfs = (u: string) => {
+      eMap[u]?.forEach((v) => {
+        if (lv[v] === undefined) {
+          lv[v] = lv[u] + 1;
+        } else {
+          lv[v] = Math.max(lv[v], lv[u] + 1);
+        }
+        if (!vis[v]) {
+          vis[v] = true;
+          dfs(v);
+        }
+      });
+    };
+
+    for (let i = 0; i < nodeCnt; ++i) {
+      // find the min inDeg label among unvisited node
+      let minDeg = nodeCnt + 1;
+      let minLabel: string = "";
+      Object.entries(inDeg).forEach(([label, deg]) => {
+        if (lv[label] === undefined && deg < minDeg) {
+          minLabel = label;
+          minDeg = deg;
+        }
+      });
+      if (minDeg === nodeCnt + 1) break;
+      for (const _node in vis) {
+        vis[_node] = false;
+      }
+      lv[minLabel] = 0;
+      vis[minLabel] = true;
+      dfs(minLabel);
+    }
+
+    // prepare nodes for each row
+    const rowLabels = Object.entries(lv)
+      .sort(([, a], [, b]) => a - b)
+      .reduce<string[][]>((acc, [label, v]) => {
+        if (acc.length === v) acc.push([label]);
+        else acc[acc.length - 1].push(label);
+        return acc;
+      }, []);
+    const labelToRefIdx = nodesRef.current.reduce<{ [label: string]: number }>(
+      (acc, ref, idx) => {
+        if (ref) {
+          acc[ref.node.label] = idx;
+        }
+        return acc;
+      },
+      {}
+    );
+
+    const dx = 4 * config.radius;
+    const dy = 4 * config.radius;
+    rowLabels.forEach((labels, i, selfRows) => {
+      const initY = -(selfRows.length * dy) / 2;
+      labels.forEach((label, j, selfLabels) => {
+        const initX = -(selfLabels.length * dx) / 2;
+        nodesRef.current[labelToRefIdx[label]].setCenter({
+          x: initX + j * dx,
+          y: initY + i * dy,
+        });
+      });
+    });
+  }, [config.radius, graph.edges]);
 
   const arrangeGraph = useCallback(
     (arrangement: GraphArrangement) => {
@@ -178,9 +281,12 @@ export const AppContextProvider = ({
         case "Grid":
           setGridGraph();
           break;
+        case "Tree":
+          setTreeGraph();
+          break;
       }
     },
-    [setCircularGraph, setGridGraph]
+    [setCircularGraph, setGridGraph, setTreeGraph]
   );
 
   const importGraph = useCallback(
@@ -222,6 +328,10 @@ export const AppContextProvider = ({
     [setGraph]
   );
 
+  useEffect(() => {
+    localStorage.setItem("edgitor-graph", JSON.stringify(graph));
+  }, [graph]);
+
   return (
     <AppContext.Provider
       value={{
@@ -235,6 +345,7 @@ export const AppContextProvider = ({
         setScale,
         zoomIn,
         zoomOut,
+        resetCenter,
         updateNode,
         updateGraph,
         setGraphType,
@@ -254,14 +365,14 @@ const DAFAULT_CONFIG: Config = {
   radius: 20,
 };
 
-const DEFAULT_GRAPH: Graph = {
+const DEFAULT_GRAPH = JSON.stringify({
   nodes: {
     a: { x: 0, y: 0, label: "a" },
     b: { x: 50, y: 50, label: "b" },
   },
   edges: [["a", "b"]],
   type: "directed",
-};
+});
 
 const randomX = () => {
   return Math.random() * 500 - 250;

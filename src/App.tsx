@@ -7,6 +7,7 @@ import ZoomController from "./components/controllers/ZoomController";
 import FunctionBtnContainer from "./components/FunctionBtnContainer";
 import Panel from "./components/controllers/Panel";
 import Branding from "./components/Branding";
+import Copyright from "./components/Copyright";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <ZoomController />
       <Panel />
       <Branding />
+      <Copyright />
     </Box>
   );
 }

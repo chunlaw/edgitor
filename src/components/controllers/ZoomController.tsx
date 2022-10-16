@@ -1,11 +1,16 @@
 import React, { useContext } from "react";
 import { Box, IconButton, Slider, SxProps, Theme } from "@mui/material";
-import { Add as AddIcon, Remove as RemoveIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  Remove as RemoveIcon,
+  Adjust as AdjustIcon,
+} from "@mui/icons-material";
 import AppContext from "../../AppContext";
 import { ZOOM_MAX_SCALE, ZOOM_MIN_SCALE } from "../../data/constants";
 
 const ZoomController = () => {
-  const { scale, setScale, zoomIn, zoomOut } = useContext(AppContext);
+  const { scale, setScale, resetCenter, zoomIn, zoomOut } =
+    useContext(AppContext);
 
   return (
     <Box sx={containerSx}>
@@ -33,6 +38,9 @@ const ZoomController = () => {
       <IconButton onClick={zoomOut}>
         <AddIcon />
       </IconButton>
+      <IconButton onClick={resetCenter}>
+        <AdjustIcon />
+      </IconButton>
     </Box>
   );
 };
@@ -48,5 +56,5 @@ const containerSx: SxProps<Theme> = {
   bottom: 0,
   right: 0,
   mr: 1,
-  mb: 1,
+  mb: 3,
 };

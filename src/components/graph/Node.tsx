@@ -8,15 +8,16 @@ import React, {
 } from "react";
 import AppContext from "../../AppContext";
 import { __MOUSE_LEFT_KEY_BUTTON__ } from "../../data/constants";
-import { Node as NodeType, Point } from "../../data/type";
+import { MouseTouchEvent, Node as NodeType, Point } from "../../data/type";
 
 export interface NodeHandle {
-  handleMouseDown: (e: React.MouseEvent<SVGSVGElement>) => void;
-  handleMouseMove: (e: React.MouseEvent<SVGSVGElement>) => void;
-  handleMouseUp: (e: React.MouseEvent<SVGSVGElement>) => void;
+  handleMouseDown: (e: MouseTouchEvent) => void;
+  handleMouseMove: (e: MouseTouchEvent) => void;
+  handleMouseUp: (e: MouseTouchEvent) => void;
   flipX: () => void;
   flipY: () => void;
   setCenter: React.Dispatch<React.SetStateAction<Point>>;
+  node: NodeType;
 }
 
 interface NodeProps {
@@ -45,13 +46,9 @@ const MemoNode = React.memo(
     const { x, y, label } = node;
 
     const handleMouseDown = useCallback(
-      ({
-        clientX,
-        clientY,
-        button,
-        target,
-      }: React.MouseEvent<SVGSVGElement>) => {
-        if (button !== __MOUSE_LEFT_KEY_BUTTON__) return;
+      ({ clientX, clientY, button, target }: MouseTouchEvent) => {
+        if (button !== undefined && button !== __MOUSE_LEFT_KEY_BUTTON__)
+          return;
         if (target !== circleRef.current) return;
         prevClickPoint.current = { x: clientX, y: clientY };
         isDragging.current = true;
@@ -60,7 +57,7 @@ const MemoNode = React.memo(
     );
 
     const handleMouseMove = useCallback(
-      (e: React.MouseEvent<SVGSVGElement>) => {
+      (e: MouseTouchEvent) => {
         if (isDragging.current) {
           const { clientX, clientY } = e;
           setCenter((prev) => {
@@ -77,7 +74,7 @@ const MemoNode = React.memo(
       [setCenter, scale]
     );
 
-    const handleMouseUp = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+    const handleMouseUp = useCallback((e: MouseTouchEvent) => {
       isDragging.current = false;
     }, []);
 
@@ -109,13 +106,44 @@ const MemoNode = React.memo(
       flipX,
       flipY,
       setCenter,
+      node,
     }));
+
+    const handleTouchStart = useCallback(
+      (e: React.TouchEvent<SVGSVGElement>) => {
+        if (e.touches.length === 1) {
+          handleMouseDown(e.touches[0]);
+        }
+      },
+      [handleMouseDown]
+    );
+
+    const handleTouchMove = useCallback(
+      (e: React.TouchEvent<SVGSVGElement>) => {
+        if (e.touches.length === 1) {
+          handleMouseMove(e.touches[0]);
+        }
+      },
+      [handleMouseMove]
+    );
+
+    const handleTouchEnd = useCallback(
+      (e: React.TouchEvent<SVGSVGElement>) => {
+        if (e.touches.length === 1) {
+          handleMouseUp(e.touches[0]);
+        }
+      },
+      [handleMouseUp]
+    );
 
     return (
       <g
         onMouseDown={onMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <circle
           ref={circleRef}

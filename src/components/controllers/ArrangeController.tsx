@@ -6,6 +6,7 @@ import {
   Grid4x4 as Grid4x4Icon,
   RadioButtonUnchecked as RadioButtonUncheckedIcon,
   AutoFixHigh as AutoFixHighIcon,
+  Forest as ForestIcon,
 } from "@mui/icons-material";
 
 const ArrangeController = () => {
@@ -46,6 +47,9 @@ const ArrangeController = () => {
         </MenuItem>
         <MenuItem onClick={() => handleClose("Grid")}>
           <Grid4x4Icon /> Grid
+        </MenuItem>
+        <MenuItem onClick={() => handleClose("Tree")}>
+          <ForestIcon /> Tree
         </MenuItem>
       </Menu>
     </>
