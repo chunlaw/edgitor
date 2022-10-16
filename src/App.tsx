@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { Box, SxProps, Theme } from "@mui/material";
+
+import SvgContainer from "./components/SvgContainer";
+import ZoomController from "./components/controllers/ZoomController";
+import FunctionBtnContainer from "./components/FunctionBtnContainer";
+import Panel from "./components/controllers/Panel";
+import Branding from "./components/Branding";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Box sx={rootContainerSx}>
+      <SvgContainer />
+      <FunctionBtnContainer />
+      <ZoomController />
+      <Panel />
+      <Branding />
+    </Box>
   );
 }
 
 export default App;
+
+const rootContainerSx: SxProps<Theme> = {
+  display: "flex",
+  height: "100vh",
+  widht: "100vw",
+};
