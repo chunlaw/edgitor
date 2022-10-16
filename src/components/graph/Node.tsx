@@ -36,6 +36,7 @@ const areEqual = (prevProps: MemoNodeProps, nextProps: MemoNodeProps) =>
 const MemoNode = React.memo(
   ({ node, radius, onMouseDown, forwardedRef }: MemoNodeProps) => {
     const circleRef = useRef<SVGCircleElement | null>(null);
+    const textRef = useRef<SVGTextElement | null>(null);
     const { scale, updateNode } = useContext(AppContext);
 
     const [center, setCenter] = useState<Point>({ x: node.x, y: node.y });
@@ -49,9 +50,10 @@ const MemoNode = React.memo(
       ({ clientX, clientY, button, target }: MouseTouchEvent) => {
         if (button !== undefined && button !== __MOUSE_LEFT_KEY_BUTTON__)
           return;
-        if (target !== circleRef.current) return;
-        prevClickPoint.current = { x: clientX, y: clientY };
-        isDragging.current = true;
+        if (target === circleRef.current || target === textRef.current) {
+          prevClickPoint.current = { x: clientX, y: clientY };
+          isDragging.current = true;
+        }
       },
       []
     );
@@ -154,7 +156,13 @@ const MemoNode = React.memo(
           stoke-width={3}
           fill="white"
         />
-        <text x={x} y={y} textAnchor="middle" alignmentBaseline="middle">
+        <text
+          ref={textRef}
+          x={x}
+          y={y}
+          textAnchor="middle"
+          alignmentBaseline="middle"
+        >
           {label}
         </text>
       </g>
