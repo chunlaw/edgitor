@@ -16,6 +16,7 @@ import {
   GraphType,
   FlipType,
   GraphArrangement,
+  RotateType,
 } from "./data/type";
 import { median } from "./utils";
 
@@ -35,8 +36,12 @@ interface AppContextState {
   updateGraph: (input: string) => void;
   setGraphType: (type: GraphType) => void;
   flipGraph: (type: FlipType) => void;
+  rotateGraph: (type: RotateType) => void;
+  transposeGraph: () => void;
   arrangeGraph: (arrangement: GraphArrangement) => void;
   importGraph: (jsonStr: string) => void;
+  handleConfigChange: (field: keyof Config, value: any) => void;
+  resetConfig: () => void;
 }
 
 const AppContext = React.createContext<AppContextState>({} as AppContextState);
@@ -46,7 +51,7 @@ export const AppContextProvider = ({
 }: {
   children: React.ReactElement;
 }) => {
-  const [config] = useState<Config>(DAFAULT_CONFIG);
+  const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
   const nodesRef = useRef<NodeHandle[]>([]);
   const [graph, setGraph] = useState<Graph>(
     JSON.parse(localStorage.getItem("edgitor-graph") || DEFAULT_GRAPH)
@@ -148,12 +153,34 @@ export const AppContextProvider = ({
     nodesRef.current
       .filter((v) => v)
       .forEach((ref) => {
-        if (type === "horizontal") {
-          ref.flipX();
-        } else {
-          ref.flipY();
+        switch (type) {
+          case "horizontal":
+            ref.flipX();
+            break;
+          case "vertical":
+            ref.flipY();
+            break;
         }
       });
+  }, []);
+
+  const rotateGraph = useCallback((type: RotateType) => {
+    nodesRef.current
+      .filter((v) => v)
+      .forEach((ref) => {
+        switch (type) {
+          case "left":
+            ref.rotateLeft();
+            break;
+          case "right":
+            ref.rotateRight();
+            break;
+        }
+      });
+  }, []);
+
+  const transposeGraph = useCallback(() => {
+    nodesRef.current.filter((v) => v).forEach((ref) => ref.transpose());
   }, []);
 
   const setCircularGraph = useCallback(() => {
@@ -244,10 +271,13 @@ export const AppContextProvider = ({
     const rowLabels = Object.entries(lv)
       .sort(([, a], [, b]) => a - b)
       .reduce<string[][]>((acc, [label, v]) => {
-        if (acc.length === v) acc.push([label]);
-        else acc[acc.length - 1].push(label);
+        while (acc.length <= v) {
+          acc.push([]);
+        }
+        acc[v].push(label);
         return acc;
-      }, []);
+      }, [])
+      .filter((v) => v.length);
     const labelToRefIdx = nodesRef.current.reduce<{ [label: string]: number }>(
       (acc, ref, idx) => {
         if (ref) {
@@ -332,6 +362,20 @@ export const AppContextProvider = ({
     localStorage.setItem("edgitor-graph", JSON.stringify(graph));
   }, [graph]);
 
+  const handleConfigChange = useCallback(
+    (field: string, value: any) => {
+      setConfig((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    },
+    [setConfig]
+  );
+
+  const resetConfig = useCallback(() => {
+    setConfig(DEFAULT_CONFIG);
+  }, [setConfig]);
+
   return (
     <AppContext.Provider
       value={{
@@ -350,8 +394,12 @@ export const AppContextProvider = ({
         updateGraph,
         setGraphType,
         flipGraph,
+        rotateGraph,
+        transposeGraph,
         arrangeGraph,
         importGraph,
+        handleConfigChange,
+        resetConfig,
       }}
     >
       {children}
@@ -361,8 +409,18 @@ export const AppContextProvider = ({
 
 export default AppContext;
 
-const DAFAULT_CONFIG: Config = {
+const DEFAULT_CONFIG: Config = {
   radius: 20,
+  fontSize: 16,
+  nodeColor: "#fff",
+  fontColor: "black",
+  nodeStrokeColor: "#000",
+  verticalAlign: "middle",
+
+  edgeFontSize: 16,
+  strokeWidth: 1,
+  strokeColor: "#000",
+  strokeStyle: "none",
 };
 
 const DEFAULT_GRAPH = JSON.stringify({

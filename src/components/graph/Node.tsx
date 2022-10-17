@@ -5,10 +5,16 @@ import React, {
   useRef,
   useState,
   useImperativeHandle,
+  useMemo,
 } from "react";
 import AppContext from "../../AppContext";
 import { __MOUSE_LEFT_KEY_BUTTON__ } from "../../data/constants";
-import { MouseTouchEvent, Node as NodeType, Point } from "../../data/type";
+import {
+  Config,
+  MouseTouchEvent,
+  Node as NodeType,
+  Point,
+} from "../../data/type";
 
 export interface NodeHandle {
   handleMouseDown: (e: MouseTouchEvent) => void;
@@ -16,13 +22,16 @@ export interface NodeHandle {
   handleMouseUp: (e: MouseTouchEvent) => void;
   flipX: () => void;
   flipY: () => void;
+  rotateLeft: () => void;
+  rotateRight: () => void;
+  transpose: () => void;
   setCenter: React.Dispatch<React.SetStateAction<Point>>;
   node: NodeType;
 }
 
 interface NodeProps {
   node: NodeType;
-  radius: number;
+  config: Config;
   onMouseDown: (e: React.MouseEvent<SVGSVGElement>) => void;
 }
 
@@ -34,7 +43,7 @@ const areEqual = (prevProps: MemoNodeProps, nextProps: MemoNodeProps) =>
   JSON.stringify(prevProps) === JSON.stringify(nextProps);
 
 const MemoNode = React.memo(
-  ({ node, radius, onMouseDown, forwardedRef }: MemoNodeProps) => {
+  ({ node, config, onMouseDown, forwardedRef }: MemoNodeProps) => {
     const circleRef = useRef<SVGCircleElement | null>(null);
     const textRef = useRef<SVGTextElement | null>(null);
     const { scale, updateNode } = useContext(AppContext);
@@ -101,12 +110,36 @@ const MemoNode = React.memo(
       }));
     }, [setCenter]);
 
+    const rotateLeft = useCallback(() => {
+      setCenter((prev) => ({
+        x: prev.y,
+        y: -prev.x,
+      }));
+    }, [setCenter]);
+
+    const rotateRight = useCallback(() => {
+      setCenter((prev) => ({
+        x: -prev.y,
+        y: prev.x,
+      }));
+    }, [setCenter]);
+
+    const transpose = useCallback(() => {
+      setCenter((prev) => ({
+        x: prev.y,
+        y: prev.x,
+      }));
+    }, []);
+
     useImperativeHandle(forwardedRef, () => ({
       handleMouseDown,
       handleMouseMove,
       handleMouseUp,
       flipX,
       flipY,
+      rotateLeft,
+      rotateRight,
+      transpose,
       setCenter,
       node,
     }));
@@ -138,6 +171,17 @@ const MemoNode = React.memo(
       [handleMouseUp]
     );
 
+    const textOffsetY = useMemo<number>(() => {
+      switch (config.verticalAlign) {
+        case "top":
+          return -config.radius * 1.5;
+        case "bottom":
+          return config.radius * 1.5;
+        default:
+          return 0;
+      }
+    }, [config.radius, config.verticalAlign]);
+
     return (
       <g
         onMouseDown={onMouseDown}
@@ -151,15 +195,17 @@ const MemoNode = React.memo(
           ref={circleRef}
           cx={x}
           cy={y}
-          r={radius}
-          stroke="black"
+          r={config.radius}
+          stroke={config.nodeStrokeColor}
           stoke-width={3}
-          fill="white"
+          fill={config.nodeColor}
         />
         <text
           ref={textRef}
           x={x}
-          y={y}
+          y={y + textOffsetY}
+          fontSize={config.fontSize}
+          style={{ fill: config.fontColor }}
           textAnchor="middle"
           alignmentBaseline="middle"
         >

@@ -1,4 +1,11 @@
-import React, { useCallback, useContext, useMemo, useRef } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import throttle from "lodash.throttle";
 import { MouseTouchEvent, Point } from "../data/type";
 import { __MOUSE_LEFT_KEY_BUTTON__ } from "../data/constants";
@@ -11,15 +18,13 @@ const SvgContainer = () => {
   const selectedNodeRef = useRef<NodeHandle | null>(null);
   const { center, scale, setCenter, zoomIn, zoomOut } = useContext(AppContext);
   const { graph, edges, nodesRef } = useContext(AppContext);
-  const {
-    config: { radius },
-  } = useContext(AppContext);
+  const { config } = useContext(AppContext);
   const isDragging = useRef<boolean>(false);
   const prevClickPoint = useRef<Point>({ x: 0, y: 0 });
-
-  const viewWidth = useMemo(() => window.innerWidth * scale, [scale]);
-
-  const viewHeight = useMemo(() => window.innerHeight * scale, [scale]);
+  const [{ viewHeight, viewWidth }, setViewSize] = useState({
+    viewWidth: window.innerWidth * scale,
+    viewHeight: window.innerHeight * scale,
+  });
 
   const handleMouseDown = useCallback(
     ({ clientX, clientY, button, target }: MouseTouchEvent) => {
@@ -114,13 +119,30 @@ const SvgContainer = () => {
     selectedNodeRef.current.handleMouseDown(e);
   };
 
+  const handleResize = useCallback(() => {
+    setViewSize({
+      viewWidth: window.innerWidth * scale,
+      viewHeight: window.innerHeight * scale,
+    });
+  }, [setViewSize, scale]);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [handleResize]);
+
+  useEffect(() => {
+    handleResize();
+  }, [scale, handleResize]);
+
   return (
     <svg
       ref={containerRef}
       id="edgitor"
       width={"100vw"}
       height={"100vh"}
-      style={{ background: "#aaa" }}
       viewBox={`${center.x - viewWidth / 2},${
         center.y - viewHeight / 2
       },${viewWidth}, ${viewHeight}`}
@@ -138,15 +160,27 @@ const SvgContainer = () => {
           id="arrowhead"
           markerWidth="10"
           markerHeight="7"
-          refX={radius + 9}
+          refX={config.radius + 9}
           refY="3.5"
           orient="auto"
+          style={{ fill: config.strokeColor }}
+        >
+          {graph.type === "directed" && <polygon points="0 0, 10 3.5, 0 7" />}
+        </marker>
+        <marker
+          id="selfarrowhead"
+          markerWidth="10"
+          markerHeight="7"
+          refX={7.5}
+          refY="3"
+          orient="auto"
+          style={{ fill: config.strokeColor }}
         >
           {graph.type === "directed" && <polygon points="0 0, 10 3.5, 0 7" />}
         </marker>
       </defs>
       {edges.map((edge, idx) => (
-        <Edge key={`edge-${idx}`} {...edge} />
+        <Edge key={`edge-${idx}`} {...edge} config={config} />
       ))}
       {Object.values(graph.nodes).map((node, idx) => (
         <Node
@@ -155,7 +189,7 @@ const SvgContainer = () => {
             nodesRef.current[idx] = el;
           }}
           node={node}
-          radius={radius}
+          config={config}
           onMouseDown={(e) => handleCircleMouseDown(e, idx)}
         />
       ))}
