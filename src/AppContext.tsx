@@ -119,19 +119,22 @@ export const AppContextProvider = ({
     (input: string) => {
       setGraph((prev) => {
         const nodes: { [label: string]: Node } = {};
-        const edges = input.split("\n").map((line) =>
-          line
-            .split(" ")
-            .filter((v) => v !== "")
-            .map((n) => {
-              if (prev.nodes[n] === undefined) {
-                nodes[n] = { x: randomX(), y: randomY(), label: n };
-              } else {
-                nodes[n] = prev.nodes[n];
-              }
-              return n;
-            })
-        );
+        const edges = input
+          .split("\n")
+          .filter((l) => l !== "")
+          .map((line) =>
+            line
+              .split(" ")
+              .filter((v) => v !== "")
+              .map((n) => {
+                if (prev.nodes[n] === undefined) {
+                  nodes[n] = { x: randomX(), y: randomY(), label: n };
+                } else {
+                  nodes[n] = prev.nodes[n];
+                }
+                return n;
+              })
+          );
 
         return {
           type: prev.type,
