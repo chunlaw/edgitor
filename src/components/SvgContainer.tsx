@@ -184,7 +184,7 @@ const SvgContainer = () => {
       ))}
       {Object.values(graph.nodes).map((node, idx) => (
         <Node
-          key={`node-${idx}`}
+          key={`node-${node.label}`}
           ref={(el: NodeHandle) => {
             nodesRef.current[idx] = el;
           }}

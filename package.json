@@ -50,6 +50,7 @@
       "last 1 safari version"
     ]
   },
+  "homepage": "https://edgitor.chunlaw.io",
   "devDependencies": {
     "@types/d3": "^7.4.0",
     "@types/lodash.throttle": "^4.1.7",
