@@ -424,12 +424,46 @@ const DEFAULT_CONFIG: Config = {
 };
 
 const DEFAULT_GRAPH = JSON.stringify({
+  type: "undirected",
   nodes: {
-    a: { x: 0, y: 0, label: "a" },
-    b: { x: 50, y: 50, label: "b" },
+    a: {
+      label: "a",
+      x: -80,
+      y: -120,
+    },
+    b: {
+      label: "b",
+      x: -80,
+      y: -40,
+    },
+    c: {
+      label: "c",
+      x: 0,
+      y: -120,
+    },
+    d: {
+      label: "d",
+      x: 0,
+      y: -40,
+    },
+    e: {
+      label: "e",
+      x: 80,
+      y: -120,
+    },
+    f: {
+      label: "f",
+      x: 80,
+      y: -40,
+    },
   },
-  edges: [["a", "b"]],
-  type: "directed",
+  edges: [
+    ["a", "b"],
+    ["b", "c"],
+    ["c", "d"],
+    ["d", "e"],
+    ["e", "f"],
+  ],
 });
 
 const randomX = () => {
