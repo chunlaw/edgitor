@@ -14,10 +14,11 @@ function App() {
     <Box sx={rootContainerSx}>
       <SvgContainer />
       <FunctionBtnContainer />
-      <ZoomController />
+
       <Panel />
       <Branding />
       <Copyright />
+      <ZoomController />
     </Box>
   );
 }

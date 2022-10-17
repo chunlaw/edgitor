@@ -5,7 +5,7 @@ import ImportController from "./controllers/ImportController";
 import TypeController from "./controllers/TypeController";
 import TransformController from "./controllers/TransformContoller";
 import ArrangeController from "./controllers/ArrangeController";
-import ConfigController from "./controllers/ConfigContoller";
+import SettingsController from "./controllers/SettingsContoller";
 
 const FunctionBtnContainer = () => {
   return (
@@ -15,7 +15,7 @@ const FunctionBtnContainer = () => {
       <TransformController />
       <TypeController />
       <ArrangeController />
-      <ConfigController />
+      <SettingsController />
     </Box>
   );
 };

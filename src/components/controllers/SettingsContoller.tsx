@@ -19,10 +19,10 @@ import {
   Settings as SettingsIcon,
   Refresh as RefreshIcon,
 } from "@mui/icons-material";
-import NodeConfig from "./config/NodeConfig";
-import EdgeConfig from "./config/EdgeConfig";
+import NodeConfig from "./settings/NodeConfig";
+import EdgeConfig from "./settings/EdgeConfig";
 
-const ConfigController = () => {
+const SettingsController = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [tab, setTab] = useState<"Node" | "Edge">("Node");
   const { resetConfig } = useContext(AppContext);
@@ -61,7 +61,7 @@ const ConfigController = () => {
   );
 };
 
-export default ConfigController;
+export default SettingsController;
 
 const headerSx: SxProps<Theme> = {
   display: "flex",

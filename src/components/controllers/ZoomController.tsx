@@ -1,5 +1,12 @@
 import React, { useContext } from "react";
-import { Box, IconButton, Slider, SxProps, Theme } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Slider,
+  SxProps,
+  Theme,
+  Tooltip,
+} from "@mui/material";
 import {
   Add as AddIcon,
   Remove as RemoveIcon,
@@ -38,9 +45,11 @@ const ZoomController = () => {
       <IconButton onClick={zoomOut}>
         <AddIcon />
       </IconButton>
-      <IconButton onClick={resetCenter}>
-        <AdjustIcon />
-      </IconButton>
+      <Tooltip title="Re-center">
+        <IconButton onClick={resetCenter}>
+          <AdjustIcon />
+        </IconButton>
+      </Tooltip>
     </Box>
   );
 };
