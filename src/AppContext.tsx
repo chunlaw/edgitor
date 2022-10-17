@@ -26,7 +26,7 @@ interface AppContextState {
   edges: Edge[];
   graph: Graph;
   config: Config;
-  nodesRef: React.MutableRefObject<NodeHandle[]>;
+  nodesRef: React.MutableRefObject<{ [label: string]: NodeHandle }>;
   setCenter: React.Dispatch<React.SetStateAction<Point>>;
   setScale: React.Dispatch<React.SetStateAction<number>>;
   zoomIn: () => void;
@@ -52,7 +52,7 @@ export const AppContextProvider = ({
   children: React.ReactElement;
 }) => {
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
-  const nodesRef = useRef<NodeHandle[]>([]);
+  const nodesRef = useRef<{ [label: string]: NodeHandle }>({});
   const [graph, setGraph] = useState<Graph>(
     JSON.parse(localStorage.getItem("edgitor-graph") || DEFAULT_GRAPH)
   );
@@ -61,9 +61,11 @@ export const AppContextProvider = ({
 
   const edges = useMemo(() => {
     const { nodes } = graph;
-    return graph.edges.map(([u, v, w]) => {
-      return { u: { ...nodes[u] }, v: { ...nodes[v] }, w };
-    });
+    return graph.edges
+      .filter((v) => v.length >= 2)
+      .map(([u, v, w]) => {
+        return { u: { ...nodes[u] }, v: { ...nodes[v] }, w };
+      });
   }, [graph]);
 
   const updateNode = useCallback(
@@ -102,7 +104,7 @@ export const AppContextProvider = ({
   }, [setScale]);
 
   const resetCenter = useCallback(() => {
-    const _nodesRef = nodesRef.current.filter((v) => v);
+    const _nodesRef = Object.values(nodesRef.current).filter((v) => v);
     if (_nodesRef.length === 0) {
       setCenter({ x: 0, y: 0 });
     } else {
@@ -117,22 +119,24 @@ export const AppContextProvider = ({
     (input: string) => {
       setGraph((prev) => {
         const nodes: { [label: string]: Node } = {};
-        const edges = input
-          .split("\n")
-          .map((line) => line.split(" ").filter((v) => v))
-          .filter((v) => v.length >= 2);
-        edges.forEach(([u, v]) => {
-          if (prev.nodes[u] === undefined)
-            nodes[u] = { x: randomX(), y: randomY(), label: u };
-          else nodes[u] = prev.nodes[u];
-          if (prev.nodes[v] === undefined)
-            nodes[v] = { x: randomX(), y: randomY(), label: v };
-          else nodes[v] = prev.nodes[v];
-        });
+        const edges = input.split("\n").map((line) =>
+          line
+            .split(" ")
+            .filter((v) => v !== "")
+            .map((n) => {
+              if (prev.nodes[n] === undefined) {
+                nodes[n] = { x: randomX(), y: randomY(), label: n };
+              } else {
+                nodes[n] = prev.nodes[n];
+              }
+              return n;
+            })
+        );
+
         return {
           type: prev.type,
           nodes,
-          edges: edges as Array<[string, string] | [string, string, string]>,
+          edges: edges as Array<string[]>,
         };
       });
     },
@@ -150,7 +154,7 @@ export const AppContextProvider = ({
   );
 
   const flipGraph = useCallback((type: FlipType) => {
-    nodesRef.current
+    Object.values(nodesRef.current)
       .filter((v) => v)
       .forEach((ref) => {
         switch (type) {
@@ -165,7 +169,7 @@ export const AppContextProvider = ({
   }, []);
 
   const rotateGraph = useCallback((type: RotateType) => {
-    nodesRef.current
+    Object.values(nodesRef.current)
       .filter((v) => v)
       .forEach((ref) => {
         switch (type) {
@@ -180,11 +184,13 @@ export const AppContextProvider = ({
   }, []);
 
   const transposeGraph = useCallback(() => {
-    nodesRef.current.filter((v) => v).forEach((ref) => ref.transpose());
+    Object.values(nodesRef.current)
+      .filter((v) => v)
+      .forEach((ref) => ref.transpose());
   }, []);
 
   const setCircularGraph = useCallback(() => {
-    const _nodesRef = nodesRef.current.filter((v) => v);
+    const _nodesRef = Object.values(nodesRef.current).filter((v) => v);
     const nodeCnt = _nodesRef.length;
     if (nodeCnt === 0) return;
     if (nodeCnt === 1) {
@@ -201,7 +207,7 @@ export const AppContextProvider = ({
   }, [config.radius]);
 
   const setGridGraph = useCallback(() => {
-    const _nodesRef = nodesRef.current.filter((v) => v);
+    const _nodesRef = Object.values(nodesRef.current).filter((v) => v);
     const nodeCnt = _nodesRef.length;
     const r = Math.ceil(Math.sqrt(nodeCnt));
     const c = Math.floor(nodeCnt / r);
@@ -218,7 +224,7 @@ export const AppContextProvider = ({
   }, [config.radius]);
 
   const setTreeGraph = useCallback(() => {
-    const _nodesRef = nodesRef.current.filter((v) => v);
+    const _nodesRef = Object.values(nodesRef.current).filter((v) => v);
     const nodeCnt = _nodesRef.length;
     const inDeg: { [label: string]: number } = {};
     const lv: { [label: string]: number } = {};
@@ -226,11 +232,12 @@ export const AppContextProvider = ({
     const eMap: { [label: string]: string[] } = {};
     graph.edges.forEach(([u, v]) => {
       if (inDeg[u] === undefined) inDeg[u] = 0;
+      vis[u] = false;
+      if (v === undefined || v === u) return;
       if (inDeg[v] === undefined) inDeg[v] = 0;
       inDeg[v] += 1;
       if (eMap[u] === undefined) eMap[u] = [];
       eMap[u].push(v);
-      vis[u] = false;
       vis[v] = false;
     }, {});
 
@@ -278,15 +285,6 @@ export const AppContextProvider = ({
         return acc;
       }, [])
       .filter((v) => v.length);
-    const labelToRefIdx = nodesRef.current.reduce<{ [label: string]: number }>(
-      (acc, ref, idx) => {
-        if (ref) {
-          acc[ref.node.label] = idx;
-        }
-        return acc;
-      },
-      {}
-    );
 
     const dx = 4 * config.radius;
     const dy = 4 * config.radius;
@@ -294,7 +292,7 @@ export const AppContextProvider = ({
       const initY = -(selfRows.length * dy) / 2;
       labels.forEach((label, j, selfLabels) => {
         const initX = -(selfLabels.length * dx) / 2;
-        nodesRef.current[labelToRefIdx[label]].setCenter({
+        nodesRef.current[label].setCenter({
           x: initX + j * dx,
           y: initY + i * dy,
         });

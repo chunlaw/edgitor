@@ -3,8 +3,6 @@ import {
   Box,
   Dialog,
   DialogContent,
-  DialogTitle,
-  Divider,
   SxProps,
   Theme,
   Typography,

@@ -42,7 +42,7 @@ export interface Graph {
   nodes: {
     [label: string]: Node;
   };
-  edges: Array<[string, string] | [string, string, string]>;
+  edges: Array<string[]>;
   type: GraphType;
 }
 

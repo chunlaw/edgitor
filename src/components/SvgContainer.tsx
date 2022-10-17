@@ -113,9 +113,9 @@ const SvgContainer = () => {
 
   const handleCircleMouseDown = (
     e: React.MouseEvent<SVGSVGElement>,
-    idx: number
+    label: string
   ) => {
-    selectedNodeRef.current = nodesRef.current[idx];
+    selectedNodeRef.current = nodesRef.current[label];
     selectedNodeRef.current.handleMouseDown(e);
   };
 
@@ -186,11 +186,15 @@ const SvgContainer = () => {
         <Node
           key={`node-${node.label}`}
           ref={(el: NodeHandle) => {
-            nodesRef.current[idx] = el;
+            if (el) {
+              nodesRef.current[node.label] = el;
+            } else {
+              delete nodesRef.current[node.label];
+            }
           }}
           node={node}
           config={config}
-          onMouseDown={(e) => handleCircleMouseDown(e, idx)}
+          onMouseDown={(e) => handleCircleMouseDown(e, node.label)}
         />
       ))}
     </svg>
