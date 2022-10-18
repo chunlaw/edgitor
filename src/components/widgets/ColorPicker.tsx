@@ -1,10 +1,11 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Box, Popover, SxProps, TextField, Theme } from "@mui/material";
 import { SketchPicker } from "react-color";
 
 interface ColorPickerProps {
-  value: string;
-  onChange: (v: string) => void;
+  value: string | null;
+  defaultValue: string;
+  onChange: (v: string | null) => void;
 }
 
 const isColor = (strColor: string) => {
@@ -13,11 +14,10 @@ const isColor = (strColor: string) => {
   return s.color !== "";
 };
 
-const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
+const ColorPicker = ({ value, defaultValue, onChange }: ColorPickerProps) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
-  const [tmpValue, setTmpValue] = useState<string>(
-    isColor(value) ? value : "#fff"
-  );
+  const [tmpValue, setTmpValue] = useState<string | null>(value);
+  const textRef = useRef<HTMLInputElement | null>(null);
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -27,6 +27,8 @@ const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
     (v: string) => {
       if (isColor(v)) {
         onChange(v);
+      } else if (!v) {
+        onChange(null);
       }
       setTmpValue(v);
     },
@@ -36,12 +38,14 @@ const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
   return (
     <Box sx={pickerSx}>
       <Box
-        sx={{ ...sampleSx, backgroundColor: value }}
+        sx={{ ...sampleSx, backgroundColor: value ?? defaultValue }}
         onClick={(e) => setAnchorEl(e.currentTarget)}
       />
       <TextField
+        ref={textRef}
         value={tmpValue}
         size="small"
+        placeholder={defaultValue}
         fullWidth
         onChange={(e) => handleChange(e.target.value)}
       />
@@ -55,7 +59,7 @@ const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
         }}
       >
         <SketchPicker
-          color={value}
+          color={value || defaultValue}
           onChangeComplete={(v) => handleChange(v.hex)}
         />
       </Popover>

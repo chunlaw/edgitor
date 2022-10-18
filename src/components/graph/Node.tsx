@@ -5,14 +5,14 @@ import React, {
   useRef,
   useState,
   useImperativeHandle,
-  useMemo,
 } from "react";
 import AppContext from "../../AppContext";
 import { __MOUSE_LEFT_KEY_BUTTON__ } from "../../data/constants";
 import {
-  Config,
+  Graph,
   MouseTouchEvent,
   Node as NodeType,
+  NodeConfig,
   Point,
 } from "../../data/type";
 
@@ -31,8 +31,9 @@ export interface NodeHandle {
 
 interface NodeProps {
   node: NodeType;
-  config: Config;
   onMouseDown: (e: React.MouseEvent<SVGSVGElement>) => void;
+  config: NodeConfig;
+  selected: boolean;
 }
 
 interface MemoNodeProps extends NodeProps {
@@ -43,10 +44,12 @@ const areEqual = (prevProps: MemoNodeProps, nextProps: MemoNodeProps) =>
   JSON.stringify(prevProps) === JSON.stringify(nextProps);
 
 const MemoNode = React.memo(
-  ({ node, config, onMouseDown, forwardedRef }: MemoNodeProps) => {
+  ({ node, onMouseDown, selected, config, forwardedRef }: MemoNodeProps) => {
+    const { pickNode } = useContext(AppContext);
     const circleRef = useRef<SVGCircleElement | null>(null);
     const textRef = useRef<SVGTextElement | null>(null);
     const { scale, updateNode } = useContext(AppContext);
+    const [hover, setHover] = useState<boolean>(false);
 
     const [center, setCenter] = useState<Point>({ x: node.x, y: node.y });
 
@@ -88,6 +91,10 @@ const MemoNode = React.memo(
     const handleMouseUp = useCallback((e: MouseTouchEvent) => {
       isDragging.current = false;
     }, []);
+
+    const handleDoubleClick = useCallback(() => {
+      pickNode(node.label);
+    }, [pickNode, node.label]);
 
     useEffect(() => {
       updateNode({
@@ -171,16 +178,27 @@ const MemoNode = React.memo(
       [handleMouseUp]
     );
 
-    const textOffsetY = useMemo<number>(() => {
-      switch (config.verticalAlign) {
-        case "top":
-          return -config.radius * 1.5;
-        case "bottom":
-          return config.radius * 1.5;
-        default:
-          return 0;
-      }
-    }, [config.radius, config.verticalAlign]);
+    const getTextOffsetY = useCallback(
+      ({ radius, verticalAlign, fontSize }: NodeConfig): number => {
+        switch (verticalAlign) {
+          case "top":
+            return -radius - fontSize - 5;
+          case "bottom":
+            return radius + fontSize + 5;
+          default:
+            return 0;
+        }
+      },
+      []
+    );
+
+    const handleMouseEnter = useCallback(() => {
+      setHover(true);
+    }, []);
+
+    const handleMouseLeave = useCallback(() => {
+      setHover(false);
+    }, []);
 
     return (
       <g
@@ -190,20 +208,55 @@ const MemoNode = React.memo(
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onDoubleClick={handleDoubleClick}
+        style={{ cursor: "pointer" }}
       >
+        {config.backgroundImage && (
+          <defs>
+            <pattern
+              id={`node-${label}-background`}
+              height="100%"
+              width="100%"
+              patternContentUnits="objectBoundingBox"
+              viewBox="0 0 1 1"
+              preserveAspectRatio="xMidYMid slice"
+            >
+              <image
+                height="1"
+                width="1"
+                preserveAspectRatio="xMidYMid slice"
+                href={config.backgroundImage}
+              />
+            </pattern>
+          </defs>
+        )}
+        {(hover || selected) && (
+          <circle
+            cx={x}
+            cy={y}
+            r={config.radius + 2}
+            stroke={config.strokeColor}
+            fill={config.strokeColor}
+          />
+        )}
         <circle
           ref={circleRef}
           cx={x}
           cy={y}
           r={config.radius}
-          stroke={config.nodeStrokeColor}
-          stoke-width={3}
-          fill={config.nodeColor}
+          stroke={config.strokeColor}
+          fill={
+            config.backgroundImage
+              ? `url(#node-${label}-background)`
+              : config.color
+          }
         />
         <text
           ref={textRef}
           x={x}
-          y={y + textOffsetY}
+          y={y + getTextOffsetY(config)}
           fontSize={config.fontSize}
           style={{ fill: config.fontColor }}
           textAnchor="middle"

@@ -13,9 +13,11 @@ import {
 } from "@mui/material";
 import AppContext from "../../../AppContext";
 import ColorPicker from "../../widgets/ColorPicker";
+import { DEFAULT_NODE_CONFIG } from "../../../data/constants";
 
 const NodeConfig = () => {
-  const { config, handleConfigChange } = useContext(AppContext);
+  const { defaultNodeConfig: config, handleNodeConfigChange } =
+    useContext(AppContext);
 
   return (
     <Table sx={tableSx}>
@@ -35,7 +37,7 @@ const NodeConfig = () => {
               }}
               fullWidth
               onChange={(e) =>
-                handleConfigChange("radius", parseInt(e.target.value, 10))
+                handleNodeConfigChange("radius", parseInt(e.target.value, 10))
               }
             />
           </TableCell>
@@ -55,7 +57,7 @@ const NodeConfig = () => {
               }}
               fullWidth
               onChange={(e) =>
-                handleConfigChange("fontSize", parseInt(e.target.value, 10))
+                handleNodeConfigChange("fontSize", parseInt(e.target.value, 10))
               }
             />
           </TableCell>
@@ -67,7 +69,8 @@ const NodeConfig = () => {
           <TableCell>
             <ColorPicker
               value={config.fontColor}
-              onChange={(v) => handleConfigChange("fontColor", v)}
+              defaultValue={DEFAULT_NODE_CONFIG.fontColor}
+              onChange={(v) => handleNodeConfigChange("fontColor", v)}
             />
           </TableCell>
         </TableRow>
@@ -77,8 +80,23 @@ const NodeConfig = () => {
           </TableCell>
           <TableCell>
             <ColorPicker
-              value={config.nodeColor}
-              onChange={(v) => handleConfigChange("nodeColor", v)}
+              value={config.color}
+              defaultValue={DEFAULT_NODE_CONFIG.color}
+              onChange={(v) => handleNodeConfigChange("color", v)}
+            />
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Background URL</TableCell>
+          <TableCell>
+            <TextField
+              value={config.backgroundImage}
+              size="small"
+              fullWidth
+              onChange={(e) =>
+                handleNodeConfigChange("backgroundImage", e.target.value)
+              }
+              placeholder={DEFAULT_NODE_CONFIG.backgroundImage || "Image URL"}
             />
           </TableCell>
         </TableRow>
@@ -88,8 +106,9 @@ const NodeConfig = () => {
           </TableCell>
           <TableCell>
             <ColorPicker
-              value={config.nodeStrokeColor}
-              onChange={(v) => handleConfigChange("nodeStrokeColor", v)}
+              value={config.strokeColor}
+              defaultValue={DEFAULT_NODE_CONFIG.strokeColor}
+              onChange={(v) => handleNodeConfigChange("strokeColor", v)}
             />
           </TableCell>
         </TableRow>
@@ -101,7 +120,7 @@ const NodeConfig = () => {
             <Select
               value={config.verticalAlign}
               onChange={(e) =>
-                handleConfigChange("verticalAlign", e.target.value)
+                handleNodeConfigChange("verticalAlign", e.target.value)
               }
               fullWidth
               size="small"

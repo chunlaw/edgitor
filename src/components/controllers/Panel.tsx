@@ -15,7 +15,6 @@ const Panel = () => {
 
   const handleChange = useCallback(
     (str: string) => {
-      console.log(str);
       setText(str);
       updateGraph(str);
     },
@@ -42,7 +41,7 @@ export default Panel;
 
 const containerSx: SxProps<Theme> = {
   position: "fixed",
-  mt: 6,
+  mt: 7,
   ml: 1,
   width: 250,
 };

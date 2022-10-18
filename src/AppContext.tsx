@@ -11,13 +11,15 @@ import {
   Node,
   Edge,
   Point,
-  Config,
+  NodeConfig,
+  EdgeConfig,
   Graph,
   GraphType,
   FlipType,
   GraphArrangement,
   RotateType,
 } from "./data/type";
+import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from "./data/constants";
 import { median } from "./utils";
 
 interface AppContextState {
@@ -25,8 +27,11 @@ interface AppContextState {
   center: Point;
   edges: Edge[];
   graph: Graph;
-  config: Config;
+  defaultNodeConfig: NodeConfig;
+  defaultEdgeConfig: EdgeConfig;
   nodesRef: React.MutableRefObject<{ [label: string]: NodeHandle }>;
+  selectedNode: string | null;
+  nodeConfig: Graph["nodeConfig"];
   setCenter: React.Dispatch<React.SetStateAction<Point>>;
   setScale: React.Dispatch<React.SetStateAction<number>>;
   zoomIn: () => void;
@@ -40,8 +45,16 @@ interface AppContextState {
   transposeGraph: () => void;
   arrangeGraph: (arrangement: GraphArrangement) => void;
   importGraph: (jsonStr: string) => void;
-  handleConfigChange: (field: keyof Config, value: any) => void;
+  handleNodeConfigChange: (field: keyof NodeConfig, value: any) => void;
+  handleEdgeConfigChange: (field: keyof EdgeConfig, value: any) => void;
   resetConfig: () => void;
+  pickNode: (label: string) => void;
+  unsetNode: () => void;
+  updateSingleNodeConfig: (
+    label: string,
+    field: keyof NodeConfig,
+    value: any
+  ) => void;
 }
 
 const AppContext = React.createContext<AppContextState>({} as AppContextState);
@@ -51,13 +64,17 @@ export const AppContextProvider = ({
 }: {
   children: React.ReactElement;
 }) => {
-  const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
   const nodesRef = useRef<{ [label: string]: NodeHandle }>({});
-  const [graph, setGraph] = useState<Graph>(
-    JSON.parse(localStorage.getItem("edgitor-graph") || DEFAULT_GRAPH)
-  );
+  const [graph, setGraph] = useState<Graph>({
+    defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
+    defaultNodeConfig: DEFAULT_NODE_CONFIG,
+    nodeConfig: {},
+    ...JSON.parse(localStorage.getItem("edgitor-graph") || DEFAULT_GRAPH),
+  });
   const [center, setCenter] = useState<Point>({ x: 0, y: 0 });
   const [scale, setScale] = useState<number>(1);
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const { defaultNodeConfig, defaultEdgeConfig, nodeConfig } = graph;
 
   const edges = useMemo(() => {
     const { nodes } = graph;
@@ -127,7 +144,7 @@ export const AppContextProvider = ({
               .split(" ")
               .filter((v) => v !== "")
               .map((n, idx) => {
-                if ( idx >= 2 ) return n;
+                if (idx >= 2) return n;
                 if (prev.nodes[n] === undefined) {
                   nodes[n] = { x: randomX(), y: randomY(), label: n };
                 } else {
@@ -138,6 +155,7 @@ export const AppContextProvider = ({
           );
 
         return {
+          ...prev,
           type: prev.type,
           nodes,
           edges: edges as Array<string[]>,
@@ -201,22 +219,24 @@ export const AppContextProvider = ({
       _nodesRef[0].setCenter({ x: 0, y: 0 });
       return;
     }
-    const bigRadius = (nodeCnt * config.radius) / Math.PI + config.radius * 4;
+    const bigRadius =
+      (nodeCnt * defaultNodeConfig.radius) / Math.PI +
+      defaultNodeConfig.radius * 4;
     _nodesRef.forEach((nodeRef, i) => {
       nodeRef.setCenter({
         x: bigRadius * Math.cos((i / nodeCnt) * Math.PI * 2),
         y: bigRadius * Math.sin((i / nodeCnt) * Math.PI * 2),
       });
     });
-  }, [config.radius]);
+  }, [defaultNodeConfig.radius]);
 
   const setGridGraph = useCallback(() => {
     const _nodesRef = Object.values(nodesRef.current).filter((v) => v);
     const nodeCnt = _nodesRef.length;
     const r = Math.ceil(Math.sqrt(nodeCnt));
     const c = Math.floor(nodeCnt / r);
-    const dx = 4 * config.radius;
-    const dy = 4 * config.radius;
+    const dx = 4 * defaultNodeConfig.radius;
+    const dy = 4 * defaultNodeConfig.radius;
     const initX = -(c * dx) / 2;
     const initY = -(r * dy) / 2;
     _nodesRef.forEach((ref, i) => {
@@ -225,7 +245,7 @@ export const AppContextProvider = ({
         y: initY + (i % c) * dy,
       });
     });
-  }, [config.radius]);
+  }, [defaultNodeConfig.radius]);
 
   const setTreeGraph = useCallback(() => {
     const _nodesRef = Object.values(nodesRef.current).filter((v) => v);
@@ -290,8 +310,8 @@ export const AppContextProvider = ({
       }, [])
       .filter((v) => v.length);
 
-    const dx = 4 * config.radius;
-    const dy = 4 * config.radius;
+    const dx = 4 * defaultNodeConfig.radius;
+    const dy = 4 * defaultNodeConfig.radius;
     rowLabels.forEach((labels, i, selfRows) => {
       const initY = -(selfRows.length * dy) / 2;
       labels.forEach((label, j, selfLabels) => {
@@ -302,7 +322,7 @@ export const AppContextProvider = ({
         });
       });
     });
-  }, [config.radius, graph.edges]);
+  }, [defaultNodeConfig.radius, graph.edges]);
 
   const arrangeGraph = useCallback(
     (arrangement: GraphArrangement) => {
@@ -364,19 +384,68 @@ export const AppContextProvider = ({
     localStorage.setItem("edgitor-graph", JSON.stringify(graph));
   }, [graph]);
 
-  const handleConfigChange = useCallback(
-    (field: string, value: any) => {
-      setConfig((prev) => ({
+  const handleNodeConfigChange = useCallback(
+    (field: keyof NodeConfig, value: any) => {
+      setGraph((prev) => ({
         ...prev,
-        [field]: value,
+        defaultNodeConfig: {
+          ...prev.defaultNodeConfig,
+          [field]: value,
+        },
       }));
     },
-    [setConfig]
+    [setGraph]
+  );
+
+  const handleEdgeConfigChange = useCallback(
+    (field: keyof EdgeConfig, value: any) => {
+      setGraph((prev) => ({
+        ...prev,
+        defaultEdgeConfig: {
+          ...prev.defaultEdgeConfig,
+          [field]: value,
+        },
+      }));
+    },
+    [setGraph]
   );
 
   const resetConfig = useCallback(() => {
-    setConfig(DEFAULT_CONFIG);
-  }, [setConfig]);
+    setGraph((prev) => ({
+      ...prev,
+      defaultNodeConfig: DEFAULT_NODE_CONFIG,
+      defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
+    }));
+  }, [setGraph]);
+
+  const pickNode = useCallback(
+    (label: string) => {
+      if (graph.nodes[label]) {
+        setSelectedNode(label);
+      }
+    },
+    [setSelectedNode, graph.nodes]
+  );
+
+  const unsetNode = useCallback(() => {
+    setSelectedNode(null);
+  }, [setSelectedNode]);
+
+  const updateSingleNodeConfig = useCallback(
+    (label: string, field: keyof NodeConfig, value: any) => {
+      setGraph((prev) => ({
+        ...prev,
+        nodeConfig: {
+          ...prev.nodeConfig,
+          [label]: {
+            ...(prev.nodeConfig[label] ?? {}),
+            [field]: value || undefined,
+          },
+        },
+      }));
+    },
+    [setGraph]
+  );
 
   return (
     <AppContext.Provider
@@ -385,8 +454,11 @@ export const AppContextProvider = ({
         scale,
         edges,
         graph,
-        config,
+        defaultNodeConfig,
+        defaultEdgeConfig,
         nodesRef,
+        selectedNode,
+        nodeConfig,
         setCenter,
         setScale,
         zoomIn,
@@ -400,8 +472,12 @@ export const AppContextProvider = ({
         transposeGraph,
         arrangeGraph,
         importGraph,
-        handleConfigChange,
+        handleNodeConfigChange,
+        handleEdgeConfigChange,
         resetConfig,
+        pickNode,
+        unsetNode,
+        updateSingleNodeConfig,
       }}
     >
       {children}
@@ -410,20 +486,6 @@ export const AppContextProvider = ({
 };
 
 export default AppContext;
-
-const DEFAULT_CONFIG: Config = {
-  radius: 20,
-  fontSize: 16,
-  nodeColor: "#fff",
-  fontColor: "black",
-  nodeStrokeColor: "#000",
-  verticalAlign: "middle",
-
-  edgeFontSize: 16,
-  strokeWidth: 1,
-  strokeColor: "#000",
-  strokeStyle: "none",
-};
 
 const DEFAULT_GRAPH = JSON.stringify({
   type: "undirected",
@@ -466,6 +528,9 @@ const DEFAULT_GRAPH = JSON.stringify({
     ["d", "e"],
     ["e", "f"],
   ],
+  defaultNodeConfig: DEFAULT_NODE_CONFIG,
+  defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
+  nodeConfig: {},
 });
 
 const randomX = () => {

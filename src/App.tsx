@@ -8,13 +8,14 @@ import FunctionBtnContainer from "./components/FunctionBtnContainer";
 import Panel from "./components/controllers/Panel";
 import Branding from "./components/Branding";
 import Copyright from "./components/Copyright";
+import SingleNodePanel from "./components/controllers/SingleNodePanel";
 
 function App() {
   return (
     <Box sx={rootContainerSx}>
       <SvgContainer />
       <FunctionBtnContainer />
-
+      <SingleNodePanel />
       <Panel />
       <Branding />
       <Copyright />

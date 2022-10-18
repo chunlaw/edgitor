@@ -11,18 +11,28 @@ export interface Edge {
 }
 
 // Context
-export interface Config {
+export interface NodeConfig {
   radius: number;
   fontSize: number;
   fontColor: string;
-  nodeColor: string;
-  nodeStrokeColor: string;
+  color: string;
+  strokeColor: string;
   verticalAlign: "top" | "middle" | "bottom";
+  backgroundImage: string;
+  description: string;
+}
 
-  edgeFontSize: number;
+export interface EdgeConfig {
+  fontSize: number;
+  fontColor: string;
   strokeWidth: number;
   strokeColor: string;
   strokeStyle: string;
+}
+
+export interface SelectedObj {
+  type: "node" | "edge";
+  label: string | number;
 }
 
 // data structure
@@ -44,6 +54,20 @@ export interface Graph {
   };
   edges: Array<string[]>;
   type: GraphType;
+  defaultNodeConfig: NodeConfig;
+  defaultEdgeConfig: EdgeConfig;
+  nodeConfig: {
+    [label: string]: {
+      radius?: number;
+      fontSize?: number;
+      fontColor?: string;
+      color?: string;
+      strokeColor?: string;
+      verticalAlign?: "top" | "middle" | "bottom";
+      backgroundImage?: string;
+      description?: string;
+    };
+  };
 }
 
 interface MouseTouchEvent {

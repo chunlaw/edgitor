@@ -13,20 +13,40 @@ import {
 } from "@mui/material";
 import AppContext from "../../../AppContext";
 import ColorPicker from "../../widgets/ColorPicker";
+import { DEFAULT_EDGE_CONFIG } from "../../../data/constants";
 
 const EdgeConfig = () => {
-  const { config, handleConfigChange } = useContext(AppContext);
+  const { defaultEdgeConfig, handleEdgeConfigChange } = useContext(AppContext);
 
   return (
     <Table sx={tableSx}>
       <TableBody>
         <TableRow>
           <TableCell>
+            <Typography variant="body2">Style</Typography>
+          </TableCell>
+          <TableCell>
+            <Select
+              value={defaultEdgeConfig.strokeStyle}
+              onChange={(e) =>
+                handleEdgeConfigChange("strokeStyle", e.target.value)
+              }
+              fullWidth
+              size="small"
+            >
+              <MenuItem value="none">Line</MenuItem>
+              <MenuItem value="1 4">Dot</MenuItem>
+              <MenuItem value="4">Dash</MenuItem>
+            </Select>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
             <Typography variant="body2">Stroke Width</Typography>
           </TableCell>
           <TableCell>
             <TextField
-              value={config.strokeWidth}
+              value={defaultEdgeConfig.strokeWidth}
               size="small"
               type="number"
               inputProps={{
@@ -35,19 +55,23 @@ const EdgeConfig = () => {
               }}
               fullWidth
               onChange={(e) =>
-                handleConfigChange("strokeWidth", parseInt(e.target.value, 10))
+                handleEdgeConfigChange(
+                  "strokeWidth",
+                  parseInt(e.target.value, 10)
+                )
               }
             />
           </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>
-            <Typography variant="body2">Color</Typography>
+            <Typography variant="body2">Stroke Color</Typography>
           </TableCell>
           <TableCell>
             <ColorPicker
-              value={config.strokeColor}
-              onChange={(v) => handleConfigChange("strokeColor", v)}
+              value={defaultEdgeConfig.strokeColor}
+              defaultValue={DEFAULT_EDGE_CONFIG.strokeColor}
+              onChange={(v) => handleEdgeConfigChange("strokeColor", v)}
             />
           </TableCell>
         </TableRow>
@@ -57,7 +81,7 @@ const EdgeConfig = () => {
           </TableCell>
           <TableCell>
             <TextField
-              value={config.edgeFontSize}
+              value={defaultEdgeConfig.fontSize}
               size="small"
               type="number"
               inputProps={{
@@ -66,28 +90,44 @@ const EdgeConfig = () => {
               }}
               fullWidth
               onChange={(e) =>
-                handleConfigChange("edgeFontSize", parseInt(e.target.value, 10))
+                handleEdgeConfigChange("fontSize", parseInt(e.target.value, 10))
               }
             />
           </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>
-            <Typography variant="body2">Style</Typography>
+            <Typography variant="body2">Stroke Width</Typography>
           </TableCell>
           <TableCell>
-            <Select
-              value={config.strokeStyle}
-              onChange={(e) =>
-                handleConfigChange("strokeStyle", e.target.value)
-              }
-              fullWidth
+            <TextField
+              value={defaultEdgeConfig.strokeWidth}
               size="small"
-            >
-              <MenuItem value="none">Line</MenuItem>
-              <MenuItem value="1 4">Dot</MenuItem>
-              <MenuItem value="4">Dash</MenuItem>
-            </Select>
+              type="number"
+              inputProps={{
+                step: 1,
+                min: 1,
+              }}
+              fullWidth
+              onChange={(e) =>
+                handleEdgeConfigChange(
+                  "strokeWidth",
+                  parseInt(e.target.value, 10)
+                )
+              }
+            />
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
+            <Typography variant="body2">Text Color</Typography>
+          </TableCell>
+          <TableCell>
+            <ColorPicker
+              value={defaultEdgeConfig.fontColor}
+              defaultValue={DEFAULT_EDGE_CONFIG.fontColor}
+              onChange={(v) => handleEdgeConfigChange("fontColor", v)}
+            />
           </TableCell>
         </TableRow>
       </TableBody>

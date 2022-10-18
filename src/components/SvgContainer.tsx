@@ -1,4 +1,5 @@
 import React, {
+  MouseEventHandler,
   useCallback,
   useContext,
   useEffect,
@@ -7,7 +8,7 @@ import React, {
   useState,
 } from "react";
 import throttle from "lodash.throttle";
-import { MouseTouchEvent, Point } from "../data/type";
+import { Graph, MouseTouchEvent, NodeConfig, Point } from "../data/type";
 import { __MOUSE_LEFT_KEY_BUTTON__ } from "../data/constants";
 import AppContext from "../AppContext";
 import Node, { NodeHandle } from "./graph/Node";
@@ -17,8 +18,9 @@ const SvgContainer = () => {
   const containerRef = useRef<SVGSVGElement | null>(null);
   const selectedNodeRef = useRef<NodeHandle | null>(null);
   const { center, scale, setCenter, zoomIn, zoomOut } = useContext(AppContext);
-  const { graph, edges, nodesRef } = useContext(AppContext);
-  const { config } = useContext(AppContext);
+  const { graph, edges, nodeConfig, nodesRef } = useContext(AppContext);
+  const { selectedNode, unsetNode } = useContext(AppContext);
+  const { defaultNodeConfig } = useContext(AppContext);
   const isDragging = useRef<boolean>(false);
   const prevClickPoint = useRef<Point>({ x: 0, y: 0 });
   const [{ viewHeight, viewWidth }, setViewSize] = useState({
@@ -126,6 +128,15 @@ const SvgContainer = () => {
     });
   }, [setViewSize, scale]);
 
+  const handleDoubleClick = useCallback(
+    ({ target }: MouseTouchEvent) => {
+      if (target === containerRef.current) {
+        unsetNode();
+      }
+    },
+    [unsetNode]
+  );
+
   useEffect(() => {
     window.addEventListener("resize", handleResize);
     return () => {
@@ -148,6 +159,7 @@ const SvgContainer = () => {
       },${viewWidth}, ${viewHeight}`}
       preserveAspectRatio="xMinYMin slice"
       onWheel={handleWheel}
+      onDoubleClick={handleDoubleClick}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -160,10 +172,10 @@ const SvgContainer = () => {
           id="arrowhead"
           markerWidth="10"
           markerHeight="7"
-          refX={config.radius + 9}
+          refX={defaultNodeConfig.radius + 9}
           refY="3.5"
           orient="auto"
-          style={{ fill: config.strokeColor }}
+          style={{ fill: defaultNodeConfig.strokeColor }}
         >
           {graph.type === "directed" && <polygon points="0 0, 10 3.5, 0 7" />}
         </marker>
@@ -174,13 +186,13 @@ const SvgContainer = () => {
           refX={7.5}
           refY="3"
           orient="auto"
-          style={{ fill: config.strokeColor }}
+          style={{ fill: defaultNodeConfig.strokeColor }}
         >
           {graph.type === "directed" && <polygon points="0 0, 10 3.5, 0 7" />}
         </marker>
       </defs>
       {edges.map((edge, idx) => (
-        <Edge key={`edge-${idx}`} {...edge} config={config} />
+        <Edge key={`edge-${idx}`} {...edge} />
       ))}
       {Object.values(graph.nodes).map((node, idx) => (
         <Node
@@ -193,8 +205,12 @@ const SvgContainer = () => {
             }
           }}
           node={node}
-          config={config}
+          config={mergeNodeConfig(
+            defaultNodeConfig,
+            nodeConfig[node.label] ?? {}
+          )}
           onMouseDown={(e) => handleCircleMouseDown(e, node.label)}
+          selected={selectedNode === node.label}
         />
       ))}
     </svg>
@@ -202,3 +218,19 @@ const SvgContainer = () => {
 };
 
 export default SvgContainer;
+
+const mergeNodeConfig = (
+  base: NodeConfig,
+  config: Graph["nodeConfig"]["label"]
+): NodeConfig => {
+  return {
+    radius: config.radius ?? base.radius,
+    fontSize: config.fontSize ?? base.fontSize,
+    fontColor: config.fontColor ?? base.fontColor,
+    color: config.color ?? base.color,
+    strokeColor: config.strokeColor ?? base.strokeColor,
+    verticalAlign: config.verticalAlign ?? base.verticalAlign,
+    backgroundImage: config.backgroundImage ?? base.backgroundImage,
+    description: config.description ?? base.description,
+  };
+};
