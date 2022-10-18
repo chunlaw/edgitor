@@ -126,7 +126,8 @@ export const AppContextProvider = ({
             line
               .split(" ")
               .filter((v) => v !== "")
-              .map((n) => {
+              .map((n, idx) => {
+                if ( idx >= 2 ) return n;
                 if (prev.nodes[n] === undefined) {
                   nodes[n] = { x: randomX(), y: randomY(), label: n };
                 } else {
