@@ -121,7 +121,7 @@ export const AppContextProvider = ({
         const nodes: { [label: string]: Node } = {};
         const edges = input
           .split("\n")
-          .filter((l) => l !== "")
+          .filter((l) => l.trim() !== "")
           .map((line) =>
             line
               .split(" ")

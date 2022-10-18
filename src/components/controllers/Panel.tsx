@@ -15,6 +15,7 @@ const Panel = () => {
 
   const handleChange = useCallback(
     (str: string) => {
+      console.log(str);
       setText(str);
       updateGraph(str);
     },
