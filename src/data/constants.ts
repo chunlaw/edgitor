@@ -15,6 +15,7 @@ export const DEFAULT_NODE_CONFIG: NodeConfig = {
   backgroundImage: "",
   backgroundImageAlign: "xMinYMid",
   backgroundImageMeetOrSlice: "slice",
+  animation: "fixed",
   description: "",
 };
 
@@ -48,3 +49,5 @@ export const SVG_IMAGE_ALIGN = [
 ];
 
 export const SVG_IMAGE_MEET_OR_SLICE = ["meet", "slice"];
+
+export const SVG_NODE_ANIMATION = ["fixed", "vibrate"];

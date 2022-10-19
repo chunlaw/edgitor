@@ -31,6 +31,7 @@ export interface NodeConfig {
     | "xMidYMax"
     | "xMaxYMax";
   backgroundImageMeetOrSlice: "meet" | "slice";
+  animation: "fixed" | "vibrate";
   description: string;
 }
 
@@ -85,7 +86,6 @@ export interface Graph {
       strokeColor?: string;
       verticalAlign?: "top" | "middle" | "bottom";
       backgroundImage?: string;
-      description?: string;
       backgroundImageAlign?:
         | "none"
         | "xMinYMin"
@@ -98,6 +98,8 @@ export interface Graph {
         | "xMidYMax"
         | "xMaxYMax";
       backgroundImageMeetOrSlice?: "meet" | "slice";
+      animation?: "fixed" | "vibrate";
+      description?: string;
     };
   };
   backgroundConfig: BackgroundConfig;

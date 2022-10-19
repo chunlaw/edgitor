@@ -20,7 +20,11 @@ import {
 } from "@mui/icons-material";
 import AppContext from "../../AppContext";
 import ColorPicker from "../widgets/ColorPicker";
-import { SVG_IMAGE_ALIGN, SVG_IMAGE_MEET_OR_SLICE } from "../../data/constants";
+import {
+  SVG_IMAGE_ALIGN,
+  SVG_IMAGE_MEET_OR_SLICE,
+  SVG_NODE_ANIMATION,
+} from "../../data/constants";
 
 const SingleNodePanel = () => {
   const {
@@ -260,6 +264,29 @@ const SingleNodePanel = () => {
                   <TextField
                     {...params}
                     placeholder={defaultNodeConfig.backgroundImageMeetOrSlice}
+                  />
+                )}
+              />
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <Typography variant="body2">Animation</Typography>
+            </TableCell>
+            <TableCell>
+              <Autocomplete
+                value={nodeConfig[selectedNode]?.animation ?? null}
+                onChange={(e, v) =>
+                  updateSingleNodeConfig(selectedNode, "animation", v)
+                }
+                fullWidth
+                size="small"
+                placeholder={defaultNodeConfig.animation}
+                options={SVG_NODE_ANIMATION}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder={defaultNodeConfig.animation}
                   />
                 )}
               />

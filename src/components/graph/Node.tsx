@@ -226,7 +226,8 @@ const MemoNode = React.memo(
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onDoubleClick={handleDoubleClick}
-        style={{ cursor: "pointer" }}
+        className={config.animation}
+        style={{ cursor: "pointer", animationDelay: `${animationDelay}s` }}
       >
         {config.backgroundImage && (
           <defs>
@@ -247,32 +248,27 @@ const MemoNode = React.memo(
             </pattern>
           </defs>
         )}
-        <g
-          className="vibrate-node"
-          style={{ animationDelay: `${animationDelay}s` }}
-        >
-          {(hover || selected) && (
-            <circle
-              cx={x}
-              cy={y}
-              r={config.radius + 2}
-              stroke={config.strokeColor}
-              fill="transparent"
-            />
-          )}
+        {(hover || selected) && (
           <circle
-            ref={circleRef}
             cx={x}
             cy={y}
-            r={config.radius}
+            r={config.radius + 2}
             stroke={config.strokeColor}
-            fill={
-              config.backgroundImage
-                ? `url(#node-${label}-background)`
-                : config.color
-            }
+            fill="transparent"
           />
-        </g>
+        )}
+        <circle
+          ref={circleRef}
+          cx={x}
+          cy={y}
+          r={config.radius}
+          stroke={config.strokeColor}
+          fill={
+            config.backgroundImage
+              ? `url(#node-${label}-background)`
+              : config.color
+          }
+        />
         <text
           ref={textRef}
           x={x}

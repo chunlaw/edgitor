@@ -19,6 +19,7 @@ import {
   DEFAULT_NODE_CONFIG,
   SVG_IMAGE_ALIGN,
   SVG_IMAGE_MEET_OR_SLICE,
+  SVG_NODE_ANIMATION,
 } from "../../../data/constants";
 
 const NodeConfigTable = () => {
@@ -201,6 +202,27 @@ const NodeConfigTable = () => {
               {SVG_IMAGE_MEET_OR_SLICE.map((mos) => (
                 <MenuItem key={mos} value={mos}>
                   {mos}
+                </MenuItem>
+              ))}
+            </Select>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
+            <Typography variant="body2">Animation</Typography>
+          </TableCell>
+          <TableCell>
+            <Select
+              value={config.animation}
+              onChange={(e, v) =>
+                handleNodeConfigChange("animation", e.target.value)
+              }
+              fullWidth
+              size="small"
+            >
+              {SVG_NODE_ANIMATION.map((ani) => (
+                <MenuItem key={`animation-${ani}`} value={ani}>
+                  {ani}
                 </MenuItem>
               ))}
             </Select>

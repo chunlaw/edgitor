@@ -241,10 +241,11 @@ const mergeNodeConfig = (
     strokeColor: config.strokeColor ?? base.strokeColor,
     verticalAlign: config.verticalAlign ?? base.verticalAlign,
     backgroundImage: config.backgroundImage ?? base.backgroundImage,
-    description: config.description ?? base.description,
     backgroundImageAlign:
       config.backgroundImageAlign ?? base.backgroundImageAlign,
     backgroundImageMeetOrSlice:
       config.backgroundImageMeetOrSlice ?? base.backgroundImageMeetOrSlice,
+    animation: config.animation ?? base.animation,
+    description: config.description ?? base.description,
   };
 };
