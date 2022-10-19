@@ -1,4 +1,4 @@
-import type { NodeConfig, EdgeConfig } from "./type";
+import type { NodeConfig, EdgeConfig, BackgroundConfig } from "./type";
 
 export const __MOUSE_LEFT_KEY_BUTTON__ = 0;
 
@@ -22,4 +22,11 @@ export const DEFAULT_EDGE_CONFIG: EdgeConfig = {
   strokeWidth: 1,
   strokeColor: "#000",
   strokeStyle: "none",
+};
+
+export const DEFAULT_BACKGROUND_CONFIG: BackgroundConfig = {
+  color: "#aaa",
+  imageUrl: "",
+  repeat: "no-repeat",
+  position: "center",
 };

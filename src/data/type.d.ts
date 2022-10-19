@@ -30,6 +30,13 @@ export interface EdgeConfig {
   strokeStyle: string;
 }
 
+export interface BackgroundConfig {
+  color: string;
+  imageUrl: string;
+  position: string;
+  repeat: string;
+}
+
 export interface SelectedObj {
   type: "node" | "edge";
   label: string | number;
@@ -68,6 +75,7 @@ export interface Graph {
       description?: string;
     };
   };
+  backgroundConfig: BackgroundConfig;
 }
 
 interface MouseTouchEvent {

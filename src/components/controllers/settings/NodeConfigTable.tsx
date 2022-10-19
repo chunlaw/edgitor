@@ -15,7 +15,7 @@ import AppContext from "../../../AppContext";
 import ColorPicker from "../../widgets/ColorPicker";
 import { DEFAULT_NODE_CONFIG } from "../../../data/constants";
 
-const NodeConfig = () => {
+const NodeConfigTable = () => {
   const { defaultNodeConfig: config, handleNodeConfigChange } =
     useContext(AppContext);
 
@@ -136,7 +136,7 @@ const NodeConfig = () => {
   );
 };
 
-export default NodeConfig;
+export default NodeConfigTable;
 
 const tableSx: SxProps<Theme> = {
   [`& .MuiTableCell-root`]: {

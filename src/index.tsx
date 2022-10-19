@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { AppContextProvider } from "./AppContext";
-import { createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { deepOrange, teal } from "@mui/material/colors";
 
 const root = ReactDOM.createRoot(
@@ -21,6 +21,7 @@ const theme = createTheme({
 root.render(
   // <React.StrictMode>
   <ThemeProvider theme={theme}>
+    <CssBaseline />
     <AppContextProvider>
       <App />
     </AppContextProvider>

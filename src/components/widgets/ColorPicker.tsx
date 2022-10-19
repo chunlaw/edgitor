@@ -60,7 +60,13 @@ const ColorPicker = ({ value, defaultValue, onChange }: ColorPickerProps) => {
       >
         <SketchPicker
           color={value || defaultValue}
-          onChangeComplete={(v) => handleChange(v.hex)}
+          onChangeComplete={(v) => {
+            const {
+              hex,
+              rgb: { r, g, b, a },
+            } = v;
+            handleChange(a === 1 ? hex : `rgba(${r}, ${g}, ${b},${a})`);
+          }}
         />
       </Popover>
     </Box>

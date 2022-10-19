@@ -20,7 +20,7 @@ const SvgContainer = () => {
   const { center, scale, setCenter, zoomIn, zoomOut } = useContext(AppContext);
   const { graph, edges, nodeConfig, nodesRef } = useContext(AppContext);
   const { selectedNode, unsetNode } = useContext(AppContext);
-  const { defaultNodeConfig } = useContext(AppContext);
+  const { defaultNodeConfig, backgroundConfig } = useContext(AppContext);
   const isDragging = useRef<boolean>(false);
   const prevClickPoint = useRef<Point>({ x: 0, y: 0 });
   const [{ viewHeight, viewWidth }, setViewSize] = useState({
@@ -148,6 +148,15 @@ const SvgContainer = () => {
     handleResize();
   }, [scale, handleResize]);
 
+  const containerStyle: React.CSSProperties = useMemo(() => {
+    return {
+      backgroundColor: backgroundConfig.color,
+      backgroundImage: `url(${backgroundConfig.imageUrl})`,
+      backgroundPosition: backgroundConfig.position,
+      backgroundRepeat: backgroundConfig.repeat,
+    };
+  }, [backgroundConfig]);
+
   return (
     <svg
       ref={containerRef}
@@ -166,6 +175,7 @@ const SvgContainer = () => {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      style={containerStyle}
     >
       <defs>
         <marker

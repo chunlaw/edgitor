@@ -5,11 +5,11 @@ import React, {
   useRef,
   useState,
   useImperativeHandle,
+  useMemo,
 } from "react";
 import AppContext from "../../AppContext";
 import { __MOUSE_LEFT_KEY_BUTTON__ } from "../../data/constants";
 import {
-  Graph,
   MouseTouchEvent,
   Node as NodeType,
   NodeConfig,
@@ -38,20 +38,35 @@ interface NodeProps {
 
 interface MemoNodeProps extends NodeProps {
   forwardedRef: React.ForwardedRef<NodeHandle>;
+  scale: number;
+  pickNode: (label: string) => void;
+  updateNode: (node: NodeType) => void;
 }
 
-const areEqual = (prevProps: MemoNodeProps, nextProps: MemoNodeProps) =>
-  JSON.stringify(prevProps) === JSON.stringify(nextProps);
+const areEqual = (prevProps: MemoNodeProps, nextProps: MemoNodeProps) => {
+  return (
+    JSON.stringify(prevProps) === JSON.stringify(nextProps) &&
+    prevProps.pickNode === nextProps.pickNode &&
+    prevProps.updateNode === nextProps.updateNode
+  );
+};
 
 const MemoNode = React.memo(
-  ({ node, onMouseDown, selected, config, forwardedRef }: MemoNodeProps) => {
-    const { pickNode } = useContext(AppContext);
+  ({
+    node,
+    onMouseDown,
+    selected,
+    config,
+    forwardedRef,
+    scale,
+    pickNode,
+    updateNode,
+  }: MemoNodeProps) => {
     const circleRef = useRef<SVGCircleElement | null>(null);
     const textRef = useRef<SVGTextElement | null>(null);
-    const { scale, updateNode } = useContext(AppContext);
     const [hover, setHover] = useState<boolean>(false);
-
     const [center, setCenter] = useState<Point>({ x: node.x, y: node.y });
+    const animationDelay = useMemo(() => -Math.random() * 10, []);
 
     const isDragging = useRef<boolean>(false);
     const prevClickPoint = useRef<Point>({ x: 0, y: 0 });
@@ -232,27 +247,32 @@ const MemoNode = React.memo(
             </pattern>
           </defs>
         )}
-        {(hover || selected) && (
+        <g
+          className="vibrate-node"
+          style={{ animationDelay: `${animationDelay}s` }}
+        >
+          {(hover || selected) && (
+            <circle
+              cx={x}
+              cy={y}
+              r={config.radius + 2}
+              stroke={config.strokeColor}
+              fill="transparent"
+            />
+          )}
           <circle
+            ref={circleRef}
             cx={x}
             cy={y}
-            r={config.radius + 2}
+            r={config.radius}
             stroke={config.strokeColor}
-            fill={config.strokeColor}
+            fill={
+              config.backgroundImage
+                ? `url(#node-${label}-background)`
+                : config.color
+            }
           />
-        )}
-        <circle
-          ref={circleRef}
-          cx={x}
-          cy={y}
-          r={config.radius}
-          stroke={config.strokeColor}
-          fill={
-            config.backgroundImage
-              ? `url(#node-${label}-background)`
-              : config.color
-          }
-        />
+        </g>
         <text
           ref={textRef}
           x={x}
@@ -271,7 +291,16 @@ const MemoNode = React.memo(
 );
 
 const Node = React.forwardRef<NodeHandle, NodeProps>((props, ref) => {
-  return <MemoNode {...props} forwardedRef={ref} />;
+  const { scale, pickNode, updateNode } = useContext(AppContext);
+  return (
+    <MemoNode
+      {...props}
+      forwardedRef={ref}
+      scale={scale}
+      pickNode={pickNode}
+      updateNode={updateNode}
+    />
+  );
 });
 
 export default Node;

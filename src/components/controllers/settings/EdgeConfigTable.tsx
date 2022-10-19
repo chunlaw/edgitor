@@ -15,7 +15,7 @@ import AppContext from "../../../AppContext";
 import ColorPicker from "../../widgets/ColorPicker";
 import { DEFAULT_EDGE_CONFIG } from "../../../data/constants";
 
-const EdgeConfig = () => {
+const EdgeConfigTable = () => {
   const { defaultEdgeConfig, handleEdgeConfigChange } = useContext(AppContext);
 
   return (
@@ -135,7 +135,7 @@ const EdgeConfig = () => {
   );
 };
 
-export default EdgeConfig;
+export default EdgeConfigTable;
 
 const tableSx: SxProps<Theme> = {
   [`& .MuiTableCell-root`]: {

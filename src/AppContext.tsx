@@ -6,7 +6,11 @@ import React, {
   useCallback,
 } from "react";
 import { NodeHandle } from "./components/graph/Node";
-import { ZOOM_MAX_SCALE, ZOOM_MIN_SCALE } from "./data/constants";
+import {
+  DEFAULT_BACKGROUND_CONFIG,
+  ZOOM_MAX_SCALE,
+  ZOOM_MIN_SCALE,
+} from "./data/constants";
 import {
   Node,
   Edge,
@@ -18,6 +22,7 @@ import {
   FlipType,
   GraphArrangement,
   RotateType,
+  BackgroundConfig,
 } from "./data/type";
 import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from "./data/constants";
 import { median } from "./utils";
@@ -32,6 +37,7 @@ interface AppContextState {
   nodesRef: React.MutableRefObject<{ [label: string]: NodeHandle }>;
   selectedNode: string | null;
   nodeConfig: Graph["nodeConfig"];
+  backgroundConfig: BackgroundConfig;
   setCenter: React.Dispatch<React.SetStateAction<Point>>;
   setScale: React.Dispatch<React.SetStateAction<number>>;
   zoomIn: () => void;
@@ -47,6 +53,10 @@ interface AppContextState {
   importGraph: (jsonStr: string) => void;
   handleNodeConfigChange: (field: keyof NodeConfig, value: any) => void;
   handleEdgeConfigChange: (field: keyof EdgeConfig, value: any) => void;
+  handleBackgroundConfigChange: (
+    field: keyof BackgroundConfig,
+    value: any
+  ) => void;
   resetConfig: () => void;
   pickNode: (label: string) => void;
   unsetNode: () => void;
@@ -69,12 +79,14 @@ export const AppContextProvider = ({
     defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
     defaultNodeConfig: DEFAULT_NODE_CONFIG,
     nodeConfig: {},
+    backgroundConfig: { color: "#aaa", imageUrl: "" },
     ...JSON.parse(localStorage.getItem("edgitor-graph") || DEFAULT_GRAPH),
   });
   const [center, setCenter] = useState<Point>({ x: 0, y: 0 });
   const [scale, setScale] = useState<number>(1);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
-  const { defaultNodeConfig, defaultEdgeConfig, nodeConfig } = graph;
+  const { defaultNodeConfig, defaultEdgeConfig, nodeConfig, backgroundConfig } =
+    graph;
 
   const edges = useMemo(() => {
     const { nodes } = graph;
@@ -410,11 +422,25 @@ export const AppContextProvider = ({
     [setGraph]
   );
 
+  const handleBackgroundConfigChange = useCallback(
+    (field: keyof BackgroundConfig, value: any) => {
+      setGraph((prev) => ({
+        ...prev,
+        backgroundConfig: {
+          ...prev.backgroundConfig,
+          [field]: value,
+        },
+      }));
+    },
+    [setGraph]
+  );
+
   const resetConfig = useCallback(() => {
     setGraph((prev) => ({
       ...prev,
       defaultNodeConfig: DEFAULT_NODE_CONFIG,
       defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
+      backgroundConfig: DEFAULT_BACKGROUND_CONFIG,
     }));
   }, [setGraph]);
 
@@ -456,6 +482,7 @@ export const AppContextProvider = ({
         graph,
         defaultNodeConfig,
         defaultEdgeConfig,
+        backgroundConfig,
         nodesRef,
         selectedNode,
         nodeConfig,
@@ -474,6 +501,7 @@ export const AppContextProvider = ({
         importGraph,
         handleNodeConfigChange,
         handleEdgeConfigChange,
+        handleBackgroundConfigChange,
         resetConfig,
         pickNode,
         unsetNode,
@@ -531,7 +559,8 @@ const DEFAULT_GRAPH = JSON.stringify({
   defaultNodeConfig: DEFAULT_NODE_CONFIG,
   defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
   nodeConfig: {},
-});
+  backgroundConfig: DEFAULT_BACKGROUND_CONFIG,
+} as Graph);
 
 const randomX = () => {
   return Math.random() * 500 - 250;
