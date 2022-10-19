@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import {
+  IconButton,
   MenuItem,
   Select,
   SxProps,
@@ -11,9 +12,14 @@ import {
   Theme,
   Typography,
 } from "@mui/material";
+import { HelpOutline as HelpOutlineIcon } from "@mui/icons-material";
 import AppContext from "../../../AppContext";
 import ColorPicker from "../../widgets/ColorPicker";
-import { DEFAULT_NODE_CONFIG } from "../../../data/constants";
+import {
+  DEFAULT_NODE_CONFIG,
+  SVG_IMAGE_ALIGN,
+  SVG_IMAGE_MEET_OR_SLICE,
+} from "../../../data/constants";
 
 const NodeConfigTable = () => {
   const { defaultNodeConfig: config, handleNodeConfigChange } =
@@ -128,6 +134,75 @@ const NodeConfigTable = () => {
               <MenuItem value="top">top</MenuItem>
               <MenuItem value="middle">middle</MenuItem>
               <MenuItem value="bottom">bottom</MenuItem>
+            </Select>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
+            <Typography sx={{ display: "inline-block" }} variant="body2">
+              Image Align
+            </Typography>
+            <IconButton
+              sx={{ display: "inline-block" }}
+              onClick={() =>
+                window.open(
+                  "https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/preserveAspectRatio#syntax"
+                )
+              }
+            >
+              <HelpOutlineIcon fontSize="small" />
+            </IconButton>
+          </TableCell>
+          <TableCell>
+            <Select
+              value={config.backgroundImageAlign}
+              onChange={(e, v) =>
+                handleNodeConfigChange("backgroundImageAlign", e.target.value)
+              }
+              fullWidth
+              size="small"
+            >
+              {SVG_IMAGE_ALIGN.map((align) => (
+                <MenuItem key={align} value={align}>
+                  {align}
+                </MenuItem>
+              ))}
+            </Select>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
+            <Typography sx={{ display: "inline-block" }} variant="body2">
+              Image Meet Or Slice
+            </Typography>
+            <IconButton
+              sx={{ display: "inline-block" }}
+              onClick={() =>
+                window.open(
+                  "https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/preserveAspectRatio#syntax"
+                )
+              }
+            >
+              <HelpOutlineIcon fontSize="small" />
+            </IconButton>
+          </TableCell>
+          <TableCell>
+            <Select
+              value={config.backgroundImageMeetOrSlice}
+              onChange={(e, v) =>
+                handleNodeConfigChange(
+                  "backgroundImageMeetOrSlice",
+                  e.target.value
+                )
+              }
+              fullWidth
+              size="small"
+            >
+              {SVG_IMAGE_MEET_OR_SLICE.map((mos) => (
+                <MenuItem key={mos} value={mos}>
+                  {mos}
+                </MenuItem>
+              ))}
             </Select>
           </TableCell>
         </TableRow>

@@ -26,6 +26,7 @@ import {
 } from "./data/type";
 import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from "./data/constants";
 import { median } from "./utils";
+import { PanelHandle } from "./components/controllers/Panel";
 
 interface AppContextState {
   scale: number;
@@ -35,6 +36,7 @@ interface AppContextState {
   defaultNodeConfig: NodeConfig;
   defaultEdgeConfig: EdgeConfig;
   nodesRef: React.MutableRefObject<{ [label: string]: NodeHandle }>;
+  panelRef: React.RefObject<PanelHandle>;
   selectedNode: string | null;
   nodeConfig: Graph["nodeConfig"];
   backgroundConfig: BackgroundConfig;
@@ -75,6 +77,7 @@ export const AppContextProvider = ({
   children: React.ReactElement;
 }) => {
   const nodesRef = useRef<{ [label: string]: NodeHandle }>({});
+  const panelRef = useRef<PanelHandle>(null);
   const [graph, setGraph] = useState<Graph>({
     nodeConfig: {},
     defaultNodeConfig: DEFAULT_NODE_CONFIG,
@@ -385,6 +388,7 @@ export const AppContextProvider = ({
           throw new Error("Edges not array");
         }
         setGraph(_graph);
+        panelRef.current?.resetPanel(_graph.edges);
       } catch (e) {
         console.error(e);
       }
@@ -484,6 +488,7 @@ export const AppContextProvider = ({
         defaultEdgeConfig,
         backgroundConfig,
         nodesRef,
+        panelRef,
         selectedNode,
         nodeConfig,
         setCenter,

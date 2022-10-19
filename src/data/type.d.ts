@@ -19,6 +19,18 @@ export interface NodeConfig {
   strokeColor: string;
   verticalAlign: "top" | "middle" | "bottom";
   backgroundImage: string;
+  backgroundImageAlign:
+    | "none"
+    | "xMinYMin"
+    | "xMidYMin"
+    | "xMaxYMin"
+    | "xMinYMid"
+    | "xMidYMid"
+    | "xMaxYMid"
+    | "xMinYMax"
+    | "xMidYMax"
+    | "xMaxYMax";
+  backgroundImageMeetOrSlice: "meet" | "slice";
   description: string;
 }
 
@@ -74,6 +86,18 @@ export interface Graph {
       verticalAlign?: "top" | "middle" | "bottom";
       backgroundImage?: string;
       description?: string;
+      backgroundImageAlign?:
+        | "none"
+        | "xMinYMin"
+        | "xMidYMin"
+        | "xMaxYMin"
+        | "xMinYMid"
+        | "xMidYMid"
+        | "xMaxYMid"
+        | "xMinYMax"
+        | "xMidYMax"
+        | "xMaxYMax";
+      backgroundImageMeetOrSlice?: "meet" | "slice";
     };
   };
   backgroundConfig: BackgroundConfig;

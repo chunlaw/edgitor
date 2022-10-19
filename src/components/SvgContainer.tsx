@@ -242,5 +242,9 @@ const mergeNodeConfig = (
     verticalAlign: config.verticalAlign ?? base.verticalAlign,
     backgroundImage: config.backgroundImage ?? base.backgroundImage,
     description: config.description ?? base.description,
+    backgroundImageAlign:
+      config.backgroundImageAlign ?? base.backgroundImageAlign,
+    backgroundImageMeetOrSlice:
+      config.backgroundImageMeetOrSlice ?? base.backgroundImageMeetOrSlice,
   };
 };

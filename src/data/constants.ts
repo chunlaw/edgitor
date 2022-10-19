@@ -13,6 +13,8 @@ export const DEFAULT_NODE_CONFIG: NodeConfig = {
   strokeColor: "#000",
   verticalAlign: "middle",
   backgroundImage: "",
+  backgroundImageAlign: "xMinYMid",
+  backgroundImageMeetOrSlice: "slice",
   description: "",
 };
 
@@ -31,3 +33,18 @@ export const DEFAULT_BACKGROUND_CONFIG: BackgroundConfig = {
   position: "center",
   size: "contain",
 };
+
+export const SVG_IMAGE_ALIGN = [
+  "none",
+  "xMinYMin",
+  "xMidYMin",
+  "xMaxYMin",
+  "xMinYMid",
+  "xMidYMid",
+  "xMaxYMid",
+  "xMinYMax",
+  "xMidYMax",
+  "xMaxYMax",
+];
+
+export const SVG_IMAGE_MEET_OR_SLICE = ["meet", "slice"];

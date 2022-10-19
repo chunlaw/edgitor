@@ -236,12 +236,12 @@ const MemoNode = React.memo(
               width="100%"
               patternContentUnits="objectBoundingBox"
               viewBox="0 0 1 1"
-              preserveAspectRatio="xMidYMid slice"
             >
+              <rect height="1" width="1" fill={config.color} />
               <image
                 height="1"
                 width="1"
-                preserveAspectRatio="xMidYMid slice"
+                preserveAspectRatio={`${config.backgroundImageAlign} ${config.backgroundImageMeetOrSlice}`}
                 href={config.backgroundImage}
               />
             </pattern>

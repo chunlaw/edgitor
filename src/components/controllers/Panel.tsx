@@ -1,10 +1,20 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useImperativeHandle,
+  useState,
+} from "react";
 import { Box, SxProps, Theme, Typography } from "@mui/material";
 import CodeMirror from "@uiw/react-codemirror";
 import { okaidia } from "@uiw/codemirror-themes-all";
 import AppContext from "../../AppContext";
+import { Graph } from "../../data/type";
 
-const Panel = () => {
+export interface PanelHandle {
+  resetPanel: (edges: string[][]) => void;
+}
+
+const Panel = React.forwardRef<PanelHandle>((_, ref) => {
   const {
     graph: { nodes, edges },
     updateGraph,
@@ -12,6 +22,17 @@ const Panel = () => {
   const [text, setText] = useState<string>(
     edges.map((e) => e.join(" ")).join("\n")
   );
+
+  const resetPanel = useCallback(
+    (_edges: Graph["edges"]) => {
+      setText(_edges.map((edge) => edge.join(" ")).join("\n"));
+    },
+    [setText]
+  );
+
+  useImperativeHandle(ref, () => ({
+    resetPanel,
+  }));
 
   const handleChange = useCallback(
     (str: string) => {
@@ -35,7 +56,7 @@ const Panel = () => {
       </Typography>
     </Box>
   );
-};
+});
 
 export default Panel;
 

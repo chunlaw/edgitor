@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./App.css";
 import { Box, SxProps, Theme } from "@mui/material";
 
@@ -9,14 +9,16 @@ import Panel from "./components/controllers/Panel";
 import Branding from "./components/Branding";
 import Copyright from "./components/Copyright";
 import SingleNodePanel from "./components/controllers/SingleNodePanel";
+import AppContext from "./AppContext";
 
 function App() {
+  const { panelRef } = useContext(AppContext);
   return (
     <Box sx={rootContainerSx}>
       <SvgContainer />
       <FunctionBtnContainer />
       <SingleNodePanel />
-      <Panel />
+      <Panel ref={panelRef} />
       <Branding />
       <Copyright />
       <ZoomController />

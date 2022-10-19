@@ -14,9 +14,13 @@ import {
   IconButton,
   Autocomplete,
 } from "@mui/material";
-import { Close as CloseIcon } from "@mui/icons-material";
+import {
+  Close as CloseIcon,
+  HelpOutline as HelpOutlineIcon,
+} from "@mui/icons-material";
 import AppContext from "../../AppContext";
 import ColorPicker from "../widgets/ColorPicker";
+import { SVG_IMAGE_ALIGN, SVG_IMAGE_MEET_OR_SLICE } from "../../data/constants";
 
 const SingleNodePanel = () => {
   const {
@@ -108,6 +112,43 @@ const SingleNodePanel = () => {
           </TableRow>
           <TableRow>
             <TableCell>
+              <Typography variant="body2">Line Color</Typography>
+            </TableCell>
+            <TableCell>
+              <ColorPicker
+                value={nodeConfig[selectedNode]?.strokeColor ?? ""}
+                defaultValue={defaultNodeConfig.strokeColor}
+                onChange={(v) =>
+                  updateSingleNodeConfig(selectedNode, "strokeColor", v)
+                }
+              />
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <Typography variant="body2">Text Vertical Align</Typography>
+            </TableCell>
+            <TableCell>
+              <Autocomplete
+                value={nodeConfig[selectedNode]?.verticalAlign ?? null}
+                onChange={(e, v) =>
+                  updateSingleNodeConfig(selectedNode, "verticalAlign", v)
+                }
+                fullWidth
+                size="small"
+                placeholder={defaultNodeConfig.verticalAlign}
+                options={["top", "middle", "bottom"]}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder={defaultNodeConfig.verticalAlign}
+                  />
+                )}
+              />
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
               <Typography variant="body2">Node Color</Typography>
             </TableCell>
             <TableCell>
@@ -146,36 +187,79 @@ const SingleNodePanel = () => {
           </TableRow>
           <TableRow>
             <TableCell>
-              <Typography variant="body2">Line Color</Typography>
+              <Typography sx={{ display: "inline-block" }} variant="body2">
+                Image Align
+              </Typography>
+              <IconButton
+                sx={{ display: "inline-block" }}
+                onClick={() =>
+                  window.open(
+                    "https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/preserveAspectRatio#syntax"
+                  )
+                }
+              >
+                <HelpOutlineIcon fontSize="small" />
+              </IconButton>
             </TableCell>
             <TableCell>
-              <ColorPicker
-                value={nodeConfig[selectedNode]?.strokeColor ?? ""}
-                defaultValue={defaultNodeConfig.strokeColor}
-                onChange={(v) =>
-                  updateSingleNodeConfig(selectedNode, "strokeColor", v)
+              <Autocomplete
+                value={nodeConfig[selectedNode]?.backgroundImageAlign ?? null}
+                onChange={(e, v) =>
+                  updateSingleNodeConfig(
+                    selectedNode,
+                    "backgroundImageAlign",
+                    v
+                  )
                 }
+                fullWidth
+                size="small"
+                placeholder={defaultNodeConfig.backgroundImageAlign}
+                options={SVG_IMAGE_ALIGN}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder={defaultNodeConfig.backgroundImageAlign}
+                  />
+                )}
               />
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell>
-              <Typography variant="body2">Text Vertical Align</Typography>
+              <Typography sx={{ display: "inline-block" }} variant="body2">
+                Image Meet Or Slice
+              </Typography>
+              <IconButton
+                sx={{ display: "inline-block" }}
+                onClick={() =>
+                  window.open(
+                    "https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/preserveAspectRatio#syntax"
+                  )
+                }
+              >
+                <HelpOutlineIcon fontSize="small" />
+              </IconButton>
             </TableCell>
             <TableCell>
               <Autocomplete
-                value={nodeConfig[selectedNode]?.verticalAlign ?? null}
+                value={
+                  nodeConfig[selectedNode]?.backgroundImageMeetOrSlice ?? null
+                }
                 onChange={(e, v) =>
-                  updateSingleNodeConfig(selectedNode, "verticalAlign", v)
+                  updateSingleNodeConfig(
+                    selectedNode,
+                    "backgroundImageMeetOrSlice",
+                    v
+                  )
                 }
                 fullWidth
                 size="small"
-                placeholder={defaultNodeConfig.verticalAlign}
-                options={["top", "middle", "bottom"]}
+                placeholder={defaultNodeConfig.backgroundImageMeetOrSlice}
+                options={SVG_IMAGE_MEET_OR_SLICE}
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    placeholder={defaultNodeConfig.verticalAlign}
+                    placeholder={defaultNodeConfig.backgroundImageMeetOrSlice}
                   />
                 )}
               />
@@ -195,7 +279,7 @@ const containerSx: SxProps<Theme> = {
   mr: 1,
   p: 1,
   right: 0,
-  width: 450,
+  width: 500,
 };
 
 const headerSx: SxProps<Theme> = {
