@@ -139,7 +139,9 @@ const NodeConfigTable = () => {
 export default NodeConfigTable;
 
 const tableSx: SxProps<Theme> = {
+  mt: 1,
   [`& .MuiTableCell-root`]: {
     borderBottom: "none",
+    py: 0.5,
   },
 };

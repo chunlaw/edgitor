@@ -193,8 +193,9 @@ const containerSx: SxProps<Theme> = {
   position: "fixed",
   mt: 7,
   mr: 1,
+  p: 1,
   right: 0,
-  width: 400,
+  width: 450,
 };
 
 const headerSx: SxProps<Theme> = {
@@ -207,5 +208,6 @@ const headerSx: SxProps<Theme> = {
 const tableSx: SxProps<Theme> = {
   [`& .MuiTableCell-root`]: {
     borderBottom: "none",
+    py: 0.5,
   },
 };
