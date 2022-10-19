@@ -29,4 +29,5 @@ export const DEFAULT_BACKGROUND_CONFIG: BackgroundConfig = {
   imageUrl: "",
   repeat: "no-repeat",
   position: "center",
+  size: "contain",
 };

@@ -35,6 +35,7 @@ export interface BackgroundConfig {
   imageUrl: string;
   position: string;
   repeat: string;
+  size: string;
 }
 
 export interface SelectedObj {

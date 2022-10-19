@@ -1,7 +1,5 @@
 import React, { useContext } from "react";
 import {
-  MenuItem,
-  Select,
   SxProps,
   Table,
   TableBody,
@@ -77,6 +75,21 @@ const BackgroundConfigTable = () => {
               fullWidth
               onChange={(e) =>
                 handleBackgroundConfigChange("repeat", e.target.value)
+              }
+            />
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
+            <Typography variant="body2">Size (CSS)</Typography>
+          </TableCell>
+          <TableCell>
+            <TextField
+              value={backgroundConfig.size}
+              size="small"
+              fullWidth
+              onChange={(e) =>
+                handleBackgroundConfigChange("size", e.target.value)
               }
             />
           </TableCell>

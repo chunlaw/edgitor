@@ -76,10 +76,10 @@ export const AppContextProvider = ({
 }) => {
   const nodesRef = useRef<{ [label: string]: NodeHandle }>({});
   const [graph, setGraph] = useState<Graph>({
-    defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
-    defaultNodeConfig: DEFAULT_NODE_CONFIG,
     nodeConfig: {},
-    backgroundConfig: { color: "#aaa", imageUrl: "" },
+    defaultNodeConfig: DEFAULT_NODE_CONFIG,
+    defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
+    backgroundConfig: DEFAULT_BACKGROUND_CONFIG,
     ...JSON.parse(localStorage.getItem("edgitor-graph") || DEFAULT_GRAPH),
   });
   const [center, setCenter] = useState<Point>({ x: 0, y: 0 });

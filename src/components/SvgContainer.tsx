@@ -1,5 +1,4 @@
 import React, {
-  MouseEventHandler,
   useCallback,
   useContext,
   useEffect,
@@ -154,6 +153,7 @@ const SvgContainer = () => {
       backgroundImage: `url(${backgroundConfig.imageUrl})`,
       backgroundPosition: backgroundConfig.position,
       backgroundRepeat: backgroundConfig.repeat,
+      backgroundSize: backgroundConfig.size,
     };
   }, [backgroundConfig]);
 

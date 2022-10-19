@@ -45,7 +45,8 @@ const ImportController = () => {
             value={json}
             onChange={(e) => setJson(e.target.value)}
             multiline
-            rows={25}
+            rows={20}
+            spellCheck="false"
           />
         </DialogContent>
         <DialogActions sx={{ mx: 3, mb: 1 }}>
