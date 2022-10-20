@@ -181,7 +181,7 @@ const SvgContainer = () => {
         <Edge
           key={`edge-${idx}`}
           {...edge}
-          vRadius={nodeConfig[edge.v.label].radius ?? defaultNodeConfig.radius}
+          vRadius={nodeConfig[edge.v.label]?.radius ?? defaultNodeConfig.radius}
           isDirected={graph.type === "directed"}
         />
       ))}
