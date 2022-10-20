@@ -19,8 +19,7 @@ const SvgContainer = () => {
   const { center, scale, setCenter, zoomIn, zoomOut } = useContext(AppContext);
   const { graph, edges, nodeConfig, nodesRef } = useContext(AppContext);
   const { selectedNode, unsetNode } = useContext(AppContext);
-  const { defaultNodeConfig, defaultEdgeConfig, backgroundConfig } =
-    useContext(AppContext);
+  const { defaultNodeConfig, backgroundConfig } = useContext(AppContext);
   const isDragging = useRef<boolean>(false);
   const prevClickPoint = useRef<Point>({ x: 0, y: 0 });
   const [{ viewHeight, viewWidth }, setViewSize] = useState({
@@ -178,32 +177,13 @@ const SvgContainer = () => {
       onTouchEnd={handleTouchEnd}
       style={containerStyle}
     >
-      <defs>
-        <marker
-          id="arrowhead"
-          markerWidth="10"
-          markerHeight="7"
-          refX={defaultNodeConfig.radius + 9}
-          refY="3.5"
-          orient="auto"
-          style={{ fill: defaultEdgeConfig.strokeColor }}
-        >
-          {graph.type === "directed" && <polygon points="0 0, 10 3.5, 0 7" />}
-        </marker>
-        <marker
-          id="selfarrowhead"
-          markerWidth="10"
-          markerHeight="7"
-          refX={7.5}
-          refY="3"
-          orient="auto"
-          style={{ fill: defaultEdgeConfig.strokeColor }}
-        >
-          {graph.type === "directed" && <polygon points="0 0, 10 3.5, 0 7" />}
-        </marker>
-      </defs>
       {edges.map((edge, idx) => (
-        <Edge key={`edge-${idx}`} {...edge} />
+        <Edge
+          key={`edge-${idx}`}
+          {...edge}
+          vRadius={nodeConfig[edge.v.label].radius ?? defaultNodeConfig.radius}
+          isDirected={graph.type === "directed"}
+        />
       ))}
       {Object.values(graph.nodes).map((node, idx) => (
         <Node

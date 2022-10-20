@@ -11,3 +11,14 @@ export const median = (values: number[]) => {
 
   return (values[half - 1] + values[half]) / 2.0;
 };
+
+export const makeId = (length: number): string => {
+  let result = "";
+  let characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};

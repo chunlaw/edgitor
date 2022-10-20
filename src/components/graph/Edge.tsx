@@ -1,25 +1,29 @@
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import AppContext from "../../AppContext";
-import { Edge as EdgeType, EdgeConfig, NodeConfig } from "../../data/type";
+import { Edge as EdgeType, EdgeConfig } from "../../data/type";
+import { makeId } from "../../utils";
 
 export interface EdgeHandle {}
 
-interface EdgeProps extends EdgeType {}
+interface EdgeProps extends EdgeType {
+  vRadius: number;
+  isDirected: boolean;
+}
 
 interface MemoEdgeProps extends EdgeProps {
   forwardedRef: React.ForwardedRef<EdgeHandle>;
   defaultEdgeConfig: EdgeConfig;
-  defaultNodeConfig: NodeConfig;
 }
 
 const areEqual = (prevProps: MemoEdgeProps, nextProps: MemoEdgeProps) =>
   JSON.stringify(prevProps) === JSON.stringify(nextProps);
 
 const MemoEdge = React.memo(
-  ({ u, v, w, defaultEdgeConfig, defaultNodeConfig }: MemoEdgeProps) => {
-    const { radius } = defaultNodeConfig;
+  ({ u, v, w, vRadius, isDirected, defaultEdgeConfig }: MemoEdgeProps) => {
     const { strokeColor, strokeStyle, strokeWidth, fontSize, fontColor } =
       defaultEdgeConfig;
+
+    const edgeId = useMemo(() => makeId(7), []);
 
     const m = {
       x: (u.x + v.x) / 2,
@@ -29,21 +33,34 @@ const MemoEdge = React.memo(
     if (u.x === v.x && u.y === v.y) {
       return (
         <g>
+          <defs>
+            <marker
+              id={`${edgeId}-marker`}
+              markerWidth="10"
+              markerHeight="7"
+              refX={10}
+              refY="3"
+              orient="auto"
+              style={{ fill: defaultEdgeConfig.strokeColor }}
+            >
+              {isDirected && <polygon points="0 0, 10 3.5, 0 7" />}
+            </marker>
+          </defs>
           <path
             d={
-              `M ${u.x},${u.y - radius} ` +
-              `a -${radius},-${radius} 0 1,1 -${radius * 2},0 ` +
-              `a -${radius},-${radius} 0 1,1 ${radius * 2},0`
+              `M ${u.x},${u.y - vRadius} ` +
+              `a -${vRadius},-${vRadius} 0 1,1 -${vRadius * 2},0 ` +
+              `a -${vRadius},-${vRadius} 0 1,1 ${vRadius * 2},0`
             }
             fill="none"
             strokeWidth={strokeWidth}
             stroke={strokeColor}
-            markerEnd="url(#selfarrowhead)"
+            markerEnd={`url(#${edgeId}-marker)`}
             strokeDasharray={strokeStyle}
           />
           <text
-            x={m.x - radius}
-            y={m.y - radius * 2}
+            x={m.x - vRadius}
+            y={m.y - vRadius * 2}
             textAnchor="middle"
             alignmentBaseline="after-edge"
             fontSize={fontSize}
@@ -56,6 +73,19 @@ const MemoEdge = React.memo(
     } else {
       return (
         <g>
+          <defs>
+            <marker
+              id={`${edgeId}-marker`}
+              markerWidth="10"
+              markerHeight="7"
+              refX={vRadius + 9}
+              refY="3.5"
+              orient="auto"
+              style={{ fill: defaultEdgeConfig.strokeColor }}
+            >
+              {isDirected && <polygon points="0 0, 10 3.5, 0 7" />}
+            </marker>
+          </defs>
           <line
             x1={u.x}
             y1={u.y}
@@ -63,7 +93,7 @@ const MemoEdge = React.memo(
             y2={v.y}
             strokeWidth={strokeWidth}
             stroke={strokeColor}
-            markerEnd="url(#arrowhead)"
+            markerEnd={`url(#${edgeId}-marker)`}
             strokeDasharray={strokeStyle}
           />
           <text
@@ -84,13 +114,12 @@ const MemoEdge = React.memo(
 );
 
 const Edge = React.forwardRef<EdgeHandle, EdgeProps>((props, ref) => {
-  const { defaultEdgeConfig, defaultNodeConfig } = useContext(AppContext);
+  const { defaultEdgeConfig } = useContext(AppContext);
   return (
     <MemoEdge
       {...props}
       forwardedRef={ref}
       defaultEdgeConfig={defaultEdgeConfig}
-      defaultNodeConfig={defaultNodeConfig}
     />
   );
 });

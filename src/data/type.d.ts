@@ -5,8 +5,8 @@ export interface Point {
 }
 
 export interface Edge {
-  u: Point;
-  v: Point;
+  u: Node;
+  v: Node;
   w?: string;
 }
 
