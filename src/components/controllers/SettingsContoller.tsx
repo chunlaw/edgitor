@@ -40,11 +40,6 @@ const SettingsController = () => {
         <DialogTitle>
           <Box sx={headerSx}>
             <Typography variant="h5">Settings</Typography>
-            <Tabs value={tab} onChange={(e, v) => setTab(v)}>
-              <Tab value="Node" label="Node" />
-              <Tab value="Edge" label="Edge" />
-              <Tab value="Background" label="Background" />
-            </Tabs>
             <Tooltip title="Reset to default">
               <IconButton onClick={resetConfig}>
                 <RefreshIcon />
@@ -53,6 +48,11 @@ const SettingsController = () => {
           </Box>
         </DialogTitle>
         <DialogContent>
+          <Tabs value={tab} onChange={(e, v) => setTab(v)}>
+            <Tab value="Node" label="Node" />
+            <Tab value="Edge" label="Edge" />
+            <Tab value="Background" label="Background" />
+          </Tabs>
           {tab === "Node" && <NodeConfigTable />}
           {tab === "Edge" && <EdgeConfigTable />}
           {tab === "Background" && <BackgroundConfigTable />}

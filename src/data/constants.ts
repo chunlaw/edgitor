@@ -1,4 +1,4 @@
-import type { NodeConfig, EdgeConfig, BackgroundConfig } from "./type";
+import type { Graph, NodeConfig, EdgeConfig, BackgroundConfig } from "./type";
 
 export const __MOUSE_LEFT_KEY_BUTTON__ = 0;
 
@@ -51,3 +51,50 @@ export const SVG_IMAGE_ALIGN = [
 export const SVG_IMAGE_MEET_OR_SLICE = ["meet", "slice"];
 
 export const SVG_NODE_ANIMATION = ["fixed", "vibrate"];
+
+export const DEFAULT_GRAPH = JSON.stringify({
+  type: "undirected",
+  nodes: {
+    a: {
+      label: "a",
+      x: -80,
+      y: -120,
+    },
+    b: {
+      label: "b",
+      x: -80,
+      y: -40,
+    },
+    c: {
+      label: "c",
+      x: 0,
+      y: -120,
+    },
+    d: {
+      label: "d",
+      x: 0,
+      y: -40,
+    },
+    e: {
+      label: "e",
+      x: 80,
+      y: -120,
+    },
+    f: {
+      label: "f",
+      x: 80,
+      y: -40,
+    },
+  },
+  edges: [
+    ["a", "b"],
+    ["b", "c"],
+    ["c", "d"],
+    ["d", "e"],
+    ["e", "f"],
+  ],
+  defaultNodeConfig: DEFAULT_NODE_CONFIG,
+  defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
+  nodeConfig: {},
+  backgroundConfig: DEFAULT_BACKGROUND_CONFIG,
+} as Graph);

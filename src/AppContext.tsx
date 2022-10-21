@@ -24,7 +24,11 @@ import {
   RotateType,
   BackgroundConfig,
 } from "./data/type";
-import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from "./data/constants";
+import {
+  DEFAULT_GRAPH,
+  DEFAULT_EDGE_CONFIG,
+  DEFAULT_NODE_CONFIG,
+} from "./data/constants";
 import { median } from "./utils";
 import { PanelHandle } from "./components/controllers/Panel";
 
@@ -44,6 +48,7 @@ interface AppContextState {
   setScale: React.Dispatch<React.SetStateAction<number>>;
   zoomIn: () => void;
   zoomOut: () => void;
+  zoom: (factor: number) => void;
   resetCenter: () => void;
   updateNode: (node: Node) => void;
   updateGraph: (input: string) => void;
@@ -85,7 +90,7 @@ export const AppContextProvider = ({
     backgroundConfig: DEFAULT_BACKGROUND_CONFIG,
     ...JSON.parse(localStorage.getItem("edgitor-graph") || DEFAULT_GRAPH),
   });
-  const [center, setCenter] = useState<Point>({ x: 0, y: 0 });
+  const [center, setCenter] = useState<Point>({ x: 0, y: -100 });
   const [scale, setScale] = useState<number>(1);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const { defaultNodeConfig, defaultEdgeConfig, nodeConfig, backgroundConfig } =
@@ -134,6 +139,21 @@ export const AppContextProvider = ({
       )
     );
   }, [setScale]);
+
+  const zoom = useCallback(
+    (factor: number) => {
+      if (Number.isNaN(factor)) return;
+      setScale((prev) =>
+        Number(
+          Math.min(
+            ZOOM_MAX_SCALE,
+            Math.max(ZOOM_MIN_SCALE, prev * factor)
+          ).toPrecision(2)
+        )
+      );
+    },
+    [setScale]
+  );
 
   const resetCenter = useCallback(() => {
     const _nodesRef = Object.values(nodesRef.current).filter((v) => v);
@@ -495,6 +515,7 @@ export const AppContextProvider = ({
         setScale,
         zoomIn,
         zoomOut,
+        zoom,
         resetCenter,
         updateNode,
         updateGraph,
@@ -519,53 +540,6 @@ export const AppContextProvider = ({
 };
 
 export default AppContext;
-
-const DEFAULT_GRAPH = JSON.stringify({
-  type: "undirected",
-  nodes: {
-    a: {
-      label: "a",
-      x: -80,
-      y: -120,
-    },
-    b: {
-      label: "b",
-      x: -80,
-      y: -40,
-    },
-    c: {
-      label: "c",
-      x: 0,
-      y: -120,
-    },
-    d: {
-      label: "d",
-      x: 0,
-      y: -40,
-    },
-    e: {
-      label: "e",
-      x: 80,
-      y: -120,
-    },
-    f: {
-      label: "f",
-      x: 80,
-      y: -40,
-    },
-  },
-  edges: [
-    ["a", "b"],
-    ["b", "c"],
-    ["c", "d"],
-    ["d", "e"],
-    ["e", "f"],
-  ],
-  defaultNodeConfig: DEFAULT_NODE_CONFIG,
-  defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
-  nodeConfig: {},
-  backgroundConfig: DEFAULT_BACKGROUND_CONFIG,
-} as Graph);
 
 const randomX = () => {
   return Math.random() * 500 - 250;

@@ -8,9 +8,9 @@ import {
   Tooltip,
 } from "@mui/material";
 import {
-  Add as AddIcon,
-  Remove as RemoveIcon,
-  Adjust as AdjustIcon,
+  AddCircle as AddIcon,
+  RemoveCircle as RemoveIcon,
+  GpsFixed as GpsFixedIcon,
 } from "@mui/icons-material";
 import AppContext from "../../AppContext";
 import { ZOOM_MAX_SCALE, ZOOM_MIN_SCALE } from "../../data/constants";
@@ -21,11 +21,12 @@ const ZoomController = () => {
 
   return (
     <Box sx={containerSx}>
-      <IconButton onClick={zoomIn}>
+      <IconButton color="primary" onClick={zoomIn}>
         <RemoveIcon />
       </IconButton>
       <Slider
         color="primary"
+        size="small"
         value={100 - (100 * scale) / (ZOOM_MAX_SCALE + ZOOM_MIN_SCALE)}
         onChange={(e, v) =>
           setScale(
@@ -42,12 +43,12 @@ const ZoomController = () => {
           )
         }
       />
-      <IconButton onClick={zoomOut}>
+      <IconButton color="primary" onClick={zoomOut}>
         <AddIcon />
       </IconButton>
       <Tooltip title="Re-center">
-        <IconButton onClick={resetCenter}>
-          <AdjustIcon />
+        <IconButton color="default" onClick={resetCenter}>
+          <GpsFixedIcon />
         </IconButton>
       </Tooltip>
     </Box>
@@ -58,7 +59,7 @@ export default ZoomController;
 
 const containerSx: SxProps<Theme> = {
   position: "fixed",
-  width: 400,
+  width: 300,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",

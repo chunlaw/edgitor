@@ -17,7 +17,7 @@ const Copyright = () => {
   return (
     <Box sx={containerSx}>
       <Typography
-        variant="subtitle2"
+        variant="caption"
         color="MenuText"
         sx={{ cursor: "pointer" }}
         onClick={() => window.open("https://github.com/chunlaw/edgitor/issues")}
@@ -25,7 +25,7 @@ const Copyright = () => {
         Issues
       </Typography>
       <Typography
-        variant="subtitle2"
+        variant="caption"
         color="MenuText"
         sx={{ cursor: "pointer" }}
         onClick={() => setDialog("Terms And Conditions")}
@@ -33,7 +33,7 @@ const Copyright = () => {
         Terms And Conditions
       </Typography>
       <Typography
-        variant="subtitle2"
+        variant="caption"
         color="MenuText"
         sx={{ cursor: "pointer" }}
         onClick={() => setDialog("Privacy Policy")}
@@ -41,7 +41,7 @@ const Copyright = () => {
         Privacy Policy
       </Typography>
       <Typography
-        variant="subtitle2"
+        variant="caption"
         color="MenuText"
         sx={{ cursor: "pointer" }}
         onClick={() => window.open("https://chunlaw.io")}
@@ -65,7 +65,7 @@ const containerSx: SxProps<Theme> = {
   display: "flex",
   bottom: 0,
   right: 0,
-  gap: 1,
+  gap: 0.5,
   mr: 2,
   mb: 1,
 };

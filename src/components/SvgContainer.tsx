@@ -12,16 +12,19 @@ import { __MOUSE_LEFT_KEY_BUTTON__ } from "../data/constants";
 import AppContext from "../AppContext";
 import Node, { NodeHandle } from "./graph/Node";
 import Edge from "./graph/Edge";
+import { getDistance } from "../utils";
 
 const SvgContainer = () => {
   const containerRef = useRef<SVGSVGElement | null>(null);
   const selectedNodeRef = useRef<NodeHandle | null>(null);
-  const { center, scale, setCenter, zoomIn, zoomOut } = useContext(AppContext);
+  const { center, scale, setCenter, zoomIn, zoomOut, zoom } =
+    useContext(AppContext);
   const { graph, edges, nodeConfig, nodesRef } = useContext(AppContext);
   const { selectedNode, unsetNode } = useContext(AppContext);
   const { defaultNodeConfig, backgroundConfig } = useContext(AppContext);
   const isDragging = useRef<boolean>(false);
   const prevClickPoint = useRef<Point>({ x: 0, y: 0 });
+  const prevTouchesDist = useRef<number>(0);
   const [{ viewHeight, viewWidth }, setViewSize] = useState({
     viewWidth: window.innerWidth * scale,
     viewHeight: window.innerHeight * scale,
@@ -85,10 +88,29 @@ const SvgContainer = () => {
     [zoomIn, zoomOut]
   );
 
+  const handleDoubleTouches = useMemo(
+    () =>
+      throttle((t1: React.Touch, t2: React.Touch) => {
+        let dist = getDistance(
+          { x: t1.clientX, y: t1.clientY },
+          { x: t2.clientX, y: t2.clientY }
+        );
+
+        zoom(prevTouchesDist.current / dist);
+        prevTouchesDist.current = dist;
+      }, 50),
+    [zoom]
+  );
+
   const handleTouchStart = useCallback(
     (e: React.TouchEvent<SVGSVGElement>) => {
       if (e.touches.length === 1) {
         handleMouseDown(e.touches[0]);
+      } else if (e.touches.length === 2) {
+        prevTouchesDist.current = getDistance(
+          { x: e.touches[0].clientX, y: e.touches[0].clientY },
+          { x: e.touches[1].clientX, y: e.touches[1].clientY }
+        );
       }
     },
     [handleMouseDown]
@@ -98,9 +120,11 @@ const SvgContainer = () => {
     (e: React.TouchEvent<SVGSVGElement>) => {
       if (e.touches.length === 1) {
         handleMouseMove(e.touches[0]);
+      } else if (e.touches.length === 2) {
+        handleDoubleTouches(e.touches[0], e.touches[1]);
       }
     },
-    [handleMouseMove]
+    [handleMouseMove, handleDoubleTouches]
   );
 
   const handleTouchEnd = useCallback(

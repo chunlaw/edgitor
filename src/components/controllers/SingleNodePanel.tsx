@@ -303,10 +303,10 @@ export default SingleNodePanel;
 const containerSx: SxProps<Theme> = {
   position: "fixed",
   mt: 7,
-  mr: 1,
+  mx: 1,
   p: 1,
   right: 0,
-  width: 500,
+  minWidth: 300,
 };
 
 const headerSx: SxProps<Theme> = {

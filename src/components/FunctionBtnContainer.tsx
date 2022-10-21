@@ -32,4 +32,11 @@ const containerSx: SxProps<Theme> = {
   "& button": {
     mx: 1,
   },
+
+  // hide scroll bar
+  "&::-webkit-scrollbar": {
+    display: "none",
+  },
+  msOverflowStyle: "none",
+  scrollbarWidth: "none",
 };

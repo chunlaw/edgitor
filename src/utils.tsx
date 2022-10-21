@@ -1,3 +1,5 @@
+import { Point } from "./data/type";
+
 export const median = (values: number[]) => {
   if (values.length === 0) return 0;
 
@@ -21,4 +23,35 @@ export const makeId = (length: number): string => {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
+};
+
+export const isPWA = (): boolean => {
+  return (
+    // @ts-ignore
+    window.navigator?.standalone === true ||
+    window.matchMedia("(display-mode: standalone)").matches
+  );
+};
+
+export const isMobilOrTablet = (): boolean => {
+  return window.matchMedia("(pointer:coarse)").matches;
+};
+
+export const isIOS = (): boolean => {
+  return (
+    [
+      "iPad Simulator",
+      "iPhone Simulator",
+      "iPod Simulator",
+      "iPad",
+      "iPhone",
+      "iPod",
+    ].includes(navigator.platform) ||
+    // iPad on iOS 13 detection
+    (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+  );
+};
+
+export const getDistance = (a: Point, b: Point): number => {
+  return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 };
