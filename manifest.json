@@ -26,5 +26,10 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#aaa",
-  "background_color": "#aaa"
+  "background_color": "#aaa",
+  "url_handlers": [
+    {
+      "origin": "https://edgitor.chunlaw.io"
+    }
+  ]
 }
