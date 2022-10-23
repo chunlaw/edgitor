@@ -44,16 +44,15 @@ const Panel = React.forwardRef<PanelHandle>((_, ref) => {
 
   return (
     <Box sx={containerSx}>
-      <Typography variant="body1">Table of Edges</Typography>
+      <Typography variant="body1">
+        Table of Edges (node count: {Object.values(nodes).length})
+      </Typography>
       <CodeMirror
         value={text}
         height="200px"
         theme={okaidia}
         onChange={handleChange}
       />
-      <Typography variant="subtitle1">
-        (Node Count: {Object.values(nodes).length})
-      </Typography>
     </Box>
   );
 });

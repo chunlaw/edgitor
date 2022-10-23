@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Paper,
   Box,
@@ -33,7 +33,26 @@ const SingleNodePanel = () => {
     updateSingleNodeConfig,
     defaultNodeConfig,
     unsetNode,
+    renameNodeLabel,
   } = useContext(AppContext);
+  const [label, setLabel] = useState<string>(selectedNode ?? "");
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setLabel(e.target.value);
+    },
+    [setLabel]
+  );
+
+  const handleBlur = useCallback(() => {
+    if (selectedNode && label) {
+      renameNodeLabel(selectedNode, label);
+    }
+  }, [selectedNode, label, renameNodeLabel]);
+
+  useEffect(() => {
+    setLabel(selectedNode ?? "");
+  }, [selectedNode]);
 
   if (selectedNode === null) {
     return <></>;
@@ -42,7 +61,15 @@ const SingleNodePanel = () => {
   return (
     <Paper sx={containerSx}>
       <Box sx={headerSx}>
-        <Typography variant="h6">Node: {selectedNode}</Typography>
+        <Typography variant="h6">Node:</Typography>
+        <TextField
+          variant="standard"
+          margin="normal"
+          sx={nodeLabelSx}
+          value={label}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
         <IconButton onClick={unsetNode}>
           <CloseIcon />
         </IconButton>
@@ -314,6 +341,11 @@ const headerSx: SxProps<Theme> = {
   justifyContent: "space-between",
   alignItems: "center",
   px: 1,
+};
+
+const nodeLabelSx: SxProps<Theme> = {
+  m: 1,
+  flex: 1,
 };
 
 const tableSx: SxProps<Theme> = {

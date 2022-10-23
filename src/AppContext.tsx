@@ -61,6 +61,7 @@ interface AppContextState {
   arrangeGraph: (arrangement: GraphArrangement) => void;
   loadUrl: (url: string) => void;
   importGraph: (jsonStr: string) => void;
+  renameNodeLabel: (oldLabel: string, newLabel: string) => void;
   handleNodeConfigChange: (field: keyof NodeConfig, value: any) => void;
   handleEdgeConfigChange: (field: keyof EdgeConfig, value: any) => void;
   handleBackgroundConfigChange: (
@@ -382,6 +383,14 @@ export const AppContextProvider = ({
     [setCircularGraph, setGridGraph, setTreeGraph]
   );
 
+  const loadUrl = useCallback(
+    (url: string) => {
+      setIsLoading(true);
+      setSearchParams({ f: url });
+    },
+    [setIsLoading, setSearchParams]
+  );
+
   const importGraph = useCallback(
     (jsonStr: string) => {
       try {
@@ -422,12 +431,49 @@ export const AppContextProvider = ({
     [setGraph]
   );
 
-  const loadUrl = useCallback(
-    (url: string) => {
-      setIsLoading(true);
-      setSearchParams({ f: url });
+  const renameNodeLabel = useCallback(
+    (oldLabel: string, newLabel: string) => {
+      if (
+        graph.nodes[newLabel] !== undefined ||
+        graph.nodes[oldLabel] === undefined
+      ) {
+        return;
+      } else {
+        panelRef.current?.resetPanel(
+          graph.edges.map(([u, v, ...props]) => [
+            u === oldLabel ? newLabel : u,
+            v === oldLabel ? newLabel : v,
+            ...props,
+          ])
+        );
+      }
+      setGraph((prev) => {
+        if (prev.nodes[newLabel] !== undefined) {
+          return prev;
+        } else if (prev.nodes[oldLabel] === undefined) {
+          return prev;
+        }
+        delete Object.assign(prev.nodes, { [newLabel]: prev.nodes[oldLabel] })[
+          oldLabel
+        ];
+        delete Object.assign(prev.nodeConfig, {
+          [newLabel]: prev.nodeConfig[oldLabel],
+        })[oldLabel];
+        prev.nodes[newLabel].label = newLabel;
+        return {
+          ...prev,
+          nodeConfig: { ...prev.nodeConfig },
+          nodes: { ...prev.nodes },
+          edges: prev.edges.map(([u, v, ...props]) => [
+            u === oldLabel ? newLabel : u,
+            v === oldLabel ? newLabel : v,
+            ...props,
+          ]),
+        };
+      });
+      setSelectedNode(newLabel);
     },
-    [setIsLoading, setSearchParams]
+    [setGraph, graph]
   );
 
   useEffect(() => {
@@ -571,8 +617,9 @@ export const AppContextProvider = ({
         rotateGraph,
         transposeGraph,
         arrangeGraph,
-        importGraph,
         loadUrl,
+        importGraph,
+        renameNodeLabel,
         handleNodeConfigChange,
         handleEdgeConfigChange,
         handleBackgroundConfigChange,

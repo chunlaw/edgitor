@@ -18,6 +18,15 @@ const theme = createTheme({
     primary: teal,
     secondary: deepOrange,
   },
+  components: {
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          userSelect: "none",
+        },
+      },
+    },
+  },
 });
 
 root.render(
