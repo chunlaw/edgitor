@@ -16,12 +16,18 @@ import AppContext from "../../AppContext";
 
 const ImportController = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [tab, setTab] = useState<"JSON">("JSON");
+  const [tab, setTab] = useState<"JSON" | "URL">("JSON");
   const [json, setJson] = useState<string>("");
-  const { importGraph } = useContext(AppContext);
+  const [url, setUrl] = useState<string>("");
+  const { importGraph, loadUrl } = useContext(AppContext);
 
   const handleSubmit = () => {
-    importGraph(json);
+    if (tab === "JSON") {
+      importGraph(json);
+    } else {
+      localStorage.removeItem(url);
+      loadUrl(encodeURI(url));
+    }
     setOpen(false);
   };
 
@@ -39,15 +45,29 @@ const ImportController = () => {
         <DialogContent>
           <Tabs value={tab} onChange={(e, v) => setTab(v)}>
             <Tab value="JSON" label="JSON" />
+            <Tab value="URL" label="URL" />
           </Tabs>
-          <TextField
-            sx={textAreaSx}
-            value={json}
-            onChange={(e) => setJson(e.target.value)}
-            multiline
-            rows={20}
-            spellCheck="false"
-          />
+          {tab === "JSON" && (
+            <TextField
+              sx={textAreaSx}
+              value={json}
+              onChange={(e) => setJson(e.target.value)}
+              multiline
+              rows={20}
+              spellCheck="false"
+              placeholder={"{...}"}
+            />
+          )}
+          {tab === "URL" && (
+            <TextField
+              sx={textAreaSx}
+              spellCheck="false"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              fullWidth
+              placeholder="https://..."
+            />
+          )}
         </DialogContent>
         <DialogActions sx={{ mx: 3, mb: 1 }}>
           <Button variant="contained" onClick={handleSubmit}>

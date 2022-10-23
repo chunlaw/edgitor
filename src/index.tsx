@@ -7,6 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import { AppContextProvider } from "./AppContext";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { deepOrange, teal } from "@mui/material/colors";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -21,12 +22,21 @@ const theme = createTheme({
 
 root.render(
   // <React.StrictMode>
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <AppContextProvider>
-      <App />
-    </AppContextProvider>
-  </ThemeProvider>
+  <BrowserRouter>
+    <Routes>
+      <Route
+        path="*"
+        element={
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <AppContextProvider>
+              <App />
+            </AppContextProvider>
+          </ThemeProvider>
+        }
+      />
+    </Routes>
+  </BrowserRouter>
   //</React.StrictMode>
 );
 

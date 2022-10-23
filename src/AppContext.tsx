@@ -31,6 +31,7 @@ import {
 } from "./data/constants";
 import { median } from "./utils";
 import { PanelHandle } from "./components/controllers/Panel";
+import { useSearchParams } from "react-router-dom";
 
 interface AppContextState {
   scale: number;
@@ -44,6 +45,7 @@ interface AppContextState {
   selectedNode: string | null;
   nodeConfig: Graph["nodeConfig"];
   backgroundConfig: BackgroundConfig;
+  isLoading: boolean;
   setCenter: React.Dispatch<React.SetStateAction<Point>>;
   setScale: React.Dispatch<React.SetStateAction<number>>;
   zoomIn: () => void;
@@ -57,6 +59,7 @@ interface AppContextState {
   rotateGraph: (type: RotateType) => void;
   transposeGraph: () => void;
   arrangeGraph: (arrangement: GraphArrangement) => void;
+  loadUrl: (url: string) => void;
   importGraph: (jsonStr: string) => void;
   handleNodeConfigChange: (field: keyof NodeConfig, value: any) => void;
   handleEdgeConfigChange: (field: keyof EdgeConfig, value: any) => void;
@@ -81,6 +84,9 @@ export const AppContextProvider = ({
 }: {
   children: React.ReactElement;
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const url = useMemo(() => searchParams.get("f"), [searchParams]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const nodesRef = useRef<{ [label: string]: NodeHandle }>({});
   const panelRef = useRef<PanelHandle>(null);
   const [graph, setGraph] = useState<Graph>({
@@ -410,15 +416,55 @@ export const AppContextProvider = ({
         setGraph(_graph);
         panelRef.current?.resetPanel(_graph.edges);
       } catch (e) {
-        console.error(e);
+        throw e;
       }
     },
     [setGraph]
   );
 
+  const loadUrl = useCallback(
+    (url: string) => {
+      setIsLoading(true);
+      setSearchParams({ f: url });
+    },
+    [setIsLoading, setSearchParams]
+  );
+
   useEffect(() => {
-    localStorage.setItem("edgitor-graph", JSON.stringify(graph));
-  }, [graph]);
+    if (isLoading) {
+      return;
+    }
+    localStorage.setItem(url || "edgitor-graph", JSON.stringify(graph));
+  }, [graph, url, isLoading]);
+
+  useEffect(() => {
+    if (url === null) {
+      setIsLoading(false);
+    } else {
+      const storedStr = localStorage.getItem(url);
+      if (storedStr === null) {
+        fetch(url)
+          .then((r) => r.text())
+          .then((_g: string) => {
+            importGraph(_g);
+          })
+          .catch((err) => {
+            setSearchParams({});
+            console.error(err);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      } else {
+        try {
+          importGraph(storedStr);
+          setIsLoading(false);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+  }, [url, importGraph, setSearchParams]);
 
   const handleNodeConfigChange = useCallback(
     (field: keyof NodeConfig, value: any) => {
@@ -511,6 +557,7 @@ export const AppContextProvider = ({
         panelRef,
         selectedNode,
         nodeConfig,
+        isLoading,
         setCenter,
         setScale,
         zoomIn,
@@ -525,6 +572,7 @@ export const AppContextProvider = ({
         transposeGraph,
         arrangeGraph,
         importGraph,
+        loadUrl,
         handleNodeConfigChange,
         handleEdgeConfigChange,
         handleBackgroundConfigChange,

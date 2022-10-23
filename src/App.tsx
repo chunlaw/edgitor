@@ -10,15 +10,11 @@ import Branding from "./components/Branding";
 import Copyright from "./components/Copyright";
 import SingleNodePanel from "./components/controllers/SingleNodePanel";
 import AppContext from "./AppContext";
-import { isMobilOrTablet, isPWA } from "./utils";
 import PWAGuideline from "./components/PWAGuildline";
+import LoadingBox from "./components/LoadingBox";
 
 function App() {
   const { panelRef } = useContext(AppContext);
-
-  if (isMobilOrTablet() && !isPWA()) {
-    return <PWAGuideline />;
-  }
 
   return (
     <Box sx={rootContainerSx}>
@@ -29,6 +25,8 @@ function App() {
       <Branding />
       <Copyright />
       <ZoomController />
+      <LoadingBox />
+      <PWAGuideline />
     </Box>
   );
 }
