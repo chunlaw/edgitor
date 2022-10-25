@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import { HelpOutline as HelpOutlineIcon } from "@mui/icons-material";
 import {
-  SVG_IMAGE_ALIGN,
   SVG_IMAGE_MEET_OR_SLICE,
   SVG_NODE_ANIMATION,
 } from "../../data/constants";

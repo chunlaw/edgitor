@@ -17,7 +17,6 @@ import AppContext from "../../../AppContext";
 import ColorPicker from "../../widgets/ColorPicker";
 import {
   DEFAULT_NODE_CONFIG,
-  SVG_IMAGE_ALIGN,
   SVG_IMAGE_MEET_OR_SLICE,
   SVG_NODE_ANIMATION,
 } from "../../../data/constants";

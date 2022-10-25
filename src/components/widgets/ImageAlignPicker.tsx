@@ -38,7 +38,7 @@ const ImageAlignPicker = ({
       onChange(v || (nullable ? null : defaultValue));
       setTmpValue(v || (nullable ? null : defaultValue));
     },
-    [onChange]
+    [onChange, setTmpValue, defaultValue, nullable]
   );
 
   const PositionButton = useCallback(
