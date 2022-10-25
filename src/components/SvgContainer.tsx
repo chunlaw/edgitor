@@ -209,7 +209,7 @@ const SvgContainer = () => {
           isDirected={graph.type === "directed"}
         />
       ))}
-      {Object.values(graph.nodes).map((node, idx) => (
+      {Object.values(graph.nodes).map((node) => (
         <Node
           key={`node-${node.label}`}
           ref={(el: NodeHandle) => {

@@ -21,10 +21,13 @@ import {
 import NodeConfigTable from "./settings/NodeConfigTable";
 import EdgeConfigTable from "./settings/EdgeConfigTable";
 import BackgroundConfigTable from "./settings/BackgroundConfigTable";
+import MetadataConfigTable from "./settings/MetadataConfigTable";
 
 const SettingsController = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [tab, setTab] = useState<"Node" | "Edge" | "Background">("Node");
+  const [tab, setTab] = useState<"Node" | "Edge" | "Background" | "Meta">(
+    "Node"
+  );
   const { resetConfig } = useContext(AppContext);
 
   return (
@@ -52,10 +55,12 @@ const SettingsController = () => {
             <Tab value="Node" label="Node" />
             <Tab value="Edge" label="Edge" />
             <Tab value="Background" label="Background" />
+            <Tab value="Meta" label="Metadata" />
           </Tabs>
           {tab === "Node" && <NodeConfigTable />}
           {tab === "Edge" && <EdgeConfigTable />}
           {tab === "Background" && <BackgroundConfigTable />}
+          {tab === "Meta" && <MetadataConfigTable />}
         </DialogContent>
       </Dialog>
     </>

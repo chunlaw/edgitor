@@ -43,13 +43,10 @@ interface MemoNodeProps extends NodeProps {
   updateNode: (node: NodeType) => void;
 }
 
-const areEqual = (prevProps: MemoNodeProps, nextProps: MemoNodeProps) => {
-  return (
-    JSON.stringify(prevProps) === JSON.stringify(nextProps) &&
-    prevProps.pickNode === nextProps.pickNode &&
-    prevProps.updateNode === nextProps.updateNode
-  );
-};
+const areEqual = (prevProps: MemoNodeProps, nextProps: MemoNodeProps) =>
+  JSON.stringify(prevProps) === JSON.stringify(nextProps) &&
+  prevProps.pickNode === nextProps.pickNode &&
+  prevProps.updateNode === nextProps.updateNode;
 
 const MemoNode = React.memo(
   ({
@@ -114,9 +111,10 @@ const MemoNode = React.memo(
     useEffect(() => {
       updateNode({
         label: node.label,
+        metadata: node.metadata,
         ...center,
       });
-    }, [updateNode, node.label, center]);
+    }, [updateNode, node.label, node.metadata, center]);
 
     const flipX = useCallback(() => {
       setCenter((prev) => ({

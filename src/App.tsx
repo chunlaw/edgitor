@@ -8,7 +8,7 @@ import FunctionBtnContainer from "./components/FunctionBtnContainer";
 import Panel from "./components/controllers/Panel";
 import Branding from "./components/Branding";
 import Copyright from "./components/Copyright";
-import SingleNodePanel from "./components/controllers/SingleNodePanel";
+import SingleNodePanel from "./components/nodePanel/SingleNodePanel";
 import AppContext from "./AppContext";
 import PWAGuideline from "./components/PWAGuildline";
 import LoadingBox from "./components/LoadingBox";

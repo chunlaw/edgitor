@@ -51,14 +51,23 @@ export interface BackgroundConfig {
   size: string;
 }
 
+export interface NodeMetadataTypeConfig {
+  [label: string]: "string" | "number";
+}
+
 export interface SelectedObj {
   type: "node" | "edge";
   label: string | number;
 }
 
+interface Metadata {
+  [key: string]: Metadata | string | number | Array;
+}
+
 // data structure
 export interface Node extends Point {
   label: string;
+  metadata: Metadata;
 }
 
 export type GraphType = "directed" | "undirected";
@@ -103,6 +112,7 @@ export interface Graph {
     };
   };
   backgroundConfig: BackgroundConfig;
+  nodeMetadataType: NodeMetadataTypeConfig;
 }
 
 interface MouseTouchEvent {

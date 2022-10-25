@@ -1,4 +1,10 @@
-import type { Graph, NodeConfig, EdgeConfig, BackgroundConfig } from "./type";
+import type {
+  Graph,
+  NodeConfig,
+  EdgeConfig,
+  BackgroundConfig,
+  NodeMetadataTypeConfig,
+} from "./type";
 
 export const __MOUSE_LEFT_KEY_BUTTON__ = 0;
 
@@ -35,6 +41,10 @@ export const DEFAULT_BACKGROUND_CONFIG: BackgroundConfig = {
   size: "contain",
 };
 
+export const DEFAULT_NODE_METADATA_TYPE: NodeMetadataTypeConfig = {
+  description: "string",
+};
+
 export const SVG_IMAGE_ALIGN = [
   "none",
   "xMinYMin",
@@ -59,31 +69,37 @@ export const DEFAULT_GRAPH = JSON.stringify({
       label: "a",
       x: -80,
       y: -120,
+      metadata: {},
     },
     b: {
       label: "b",
       x: -80,
       y: -40,
+      metadata: {},
     },
     c: {
       label: "c",
       x: 0,
       y: -120,
+      metadata: {},
     },
     d: {
       label: "d",
       x: 0,
       y: -40,
+      metadata: {},
     },
     e: {
       label: "e",
       x: 80,
       y: -120,
+      metadata: {},
     },
     f: {
       label: "f",
       x: 80,
       y: -40,
+      metadata: {},
     },
   },
   edges: [
@@ -97,4 +113,7 @@ export const DEFAULT_GRAPH = JSON.stringify({
   defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
   nodeConfig: {},
   backgroundConfig: DEFAULT_BACKGROUND_CONFIG,
+  nodeMetadataType: {
+    description: "string",
+  },
 } as Graph);

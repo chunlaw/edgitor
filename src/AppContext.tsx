@@ -8,6 +8,7 @@ import React, {
 import { NodeHandle } from "./components/graph/Node";
 import {
   DEFAULT_BACKGROUND_CONFIG,
+  DEFAULT_NODE_METADATA_TYPE,
   ZOOM_MAX_SCALE,
   ZOOM_MIN_SCALE,
 } from "./data/constants";
@@ -29,7 +30,7 @@ import {
   DEFAULT_EDGE_CONFIG,
   DEFAULT_NODE_CONFIG,
 } from "./data/constants";
-import { median } from "./utils";
+import { flatten, median, unflatten } from "./utils";
 import { PanelHandle } from "./components/controllers/Panel";
 import { useSearchParams } from "react-router-dom";
 
@@ -76,6 +77,9 @@ interface AppContextState {
     field: keyof NodeConfig,
     value: any
   ) => void;
+  addMetaType: (label: string, type: "number" | "string") => void;
+  removeMetaType: (label: string) => void;
+  updateSelectedNodeMetadata: (label: string, value?: string | number) => void;
 }
 
 const AppContext = React.createContext<AppContextState>({} as AppContextState);
@@ -95,6 +99,7 @@ export const AppContextProvider = ({
     defaultNodeConfig: DEFAULT_NODE_CONFIG,
     defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
     backgroundConfig: DEFAULT_BACKGROUND_CONFIG,
+    nodeMetadataType: DEFAULT_NODE_METADATA_TYPE,
     ...JSON.parse(localStorage.getItem("edgitor-graph") || DEFAULT_GRAPH),
   });
   const [center, setCenter] = useState<Point>({ x: 0, y: -100 });
@@ -188,7 +193,12 @@ export const AppContextProvider = ({
               .map((n, idx) => {
                 if (idx >= 2) return n;
                 if (prev.nodes[n] === undefined) {
-                  nodes[n] = { x: randomX(), y: randomY(), label: n };
+                  nodes[n] = {
+                    x: randomX(),
+                    y: randomY(),
+                    label: n,
+                    metadata: {},
+                  };
                 } else {
                   nodes[n] = prev.nodes[n];
                 }
@@ -589,6 +599,56 @@ export const AppContextProvider = ({
     [setGraph]
   );
 
+  const addMetaType = useCallback(
+    (label: string, type: "number" | "string") => {
+      setGraph((prev) => ({
+        ...prev,
+        nodeMetadataType: {
+          ...prev.nodeMetadataType,
+          [label]: type,
+        },
+      }));
+    },
+    [setGraph]
+  );
+
+  const removeMetaType = useCallback(
+    (label: string) => {
+      setGraph((prev) => {
+        const nodeMetadataType = { ...prev.nodeMetadataType };
+        delete nodeMetadataType[label];
+        return {
+          ...prev,
+          nodeMetadataType,
+        };
+      });
+    },
+    [setGraph]
+  );
+
+  const updateSelectedNodeMetadata = useCallback(
+    (label: string, value?: number | string) => {
+      if (selectedNode === null) return;
+      setGraph((prev) => {
+        const curMetadata = flatten(prev.nodes[selectedNode].metadata ?? {});
+        if (value === undefined) delete curMetadata[label];
+        else curMetadata[label] = value;
+
+        return {
+          ...prev,
+          nodes: {
+            ...prev.nodes,
+            [selectedNode]: {
+              ...prev.nodes[selectedNode],
+              metadata: unflatten(curMetadata),
+            },
+          },
+        };
+      });
+    },
+    [setGraph, selectedNode]
+  );
+
   return (
     <AppContext.Provider
       value={{
@@ -627,6 +687,9 @@ export const AppContextProvider = ({
         pickNode,
         unsetNode,
         updateSingleNodeConfig,
+        addMetaType,
+        removeMetaType,
+        updateSelectedNodeMetadata,
       }}
     >
       {children}

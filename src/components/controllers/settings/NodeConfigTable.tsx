@@ -21,6 +21,7 @@ import {
   SVG_IMAGE_MEET_OR_SLICE,
   SVG_NODE_ANIMATION,
 } from "../../../data/constants";
+import ImageAlignPicker from "../../widgets/ImageAlignPicker";
 
 const NodeConfigTable = () => {
   const { defaultNodeConfig: config, handleNodeConfigChange } =
@@ -155,20 +156,14 @@ const NodeConfigTable = () => {
             </IconButton>
           </TableCell>
           <TableCell>
-            <Select
+            <ImageAlignPicker
               value={config.backgroundImageAlign}
-              onChange={(e, v) =>
-                handleNodeConfigChange("backgroundImageAlign", e.target.value)
+              defaultValue={DEFAULT_NODE_CONFIG.backgroundImageAlign}
+              onChange={(v) =>
+                handleNodeConfigChange("backgroundImageAlign", v)
               }
-              fullWidth
-              size="small"
-            >
-              {SVG_IMAGE_ALIGN.map((align) => (
-                <MenuItem key={align} value={align}>
-                  {align}
-                </MenuItem>
-              ))}
-            </Select>
+              nullable={false}
+            />
           </TableCell>
         </TableRow>
         <TableRow>

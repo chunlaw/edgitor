@@ -1,4 +1,4 @@
-import { Point } from "./data/type";
+import { Metadata, Point } from "./data/type";
 
 export const median = (values: number[]) => {
   if (values.length === 0) return 0;
@@ -54,4 +54,43 @@ export const isIOS = (): boolean => {
 
 export const getDistance = (a: Point, b: Point): number => {
   return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+};
+
+export const flatten = (data: any): Metadata => {
+  var result = {} as Metadata;
+  function recurse(cur: any, prop: string) {
+    if (Object(cur) !== cur) {
+      result[prop] = cur;
+    } else if (Array.isArray(cur)) {
+      for (var i = 0, l = cur.length; i < l; i++)
+        recurse(cur[i], prop + "[" + i + "]");
+      if (l === 0) result[prop] = [];
+    } else {
+      var isEmpty = true;
+      for (var p in cur) {
+        isEmpty = false;
+        recurse(cur[p], prop ? prop + "." + p : p);
+      }
+      if (isEmpty && prop) result[prop] = {};
+    }
+  }
+  recurse(data, "");
+  return result;
+};
+
+export const unflatten = (data: any): Metadata => {
+  if (Object(data) !== data || Array.isArray(data)) return data;
+  var regex = /\.?([^.[\]]+)|\[(\d+)\]/g,
+    resultholder = {} as { [label: string]: any };
+  for (var p in data) {
+    var cur = resultholder,
+      prop = "",
+      m;
+    for (m = regex.exec(p); m; m = regex.exec(p)) {
+      cur = cur[prop] || (cur[prop] = m[2] ? [] : {});
+      prop = m[2] || m[1];
+    }
+    cur[prop] = data[p];
+  }
+  return resultholder[""] || resultholder;
 };
