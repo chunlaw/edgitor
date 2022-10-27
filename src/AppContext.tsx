@@ -9,6 +9,7 @@ import { NodeHandle } from "./components/graph/Node";
 import {
   DEFAULT_BACKGROUND_CONFIG,
   DEFAULT_NODE_METADATA_TYPE,
+  EMPTY_GRAPH,
   ZOOM_MAX_SCALE,
   ZOOM_MIN_SCALE,
 } from "./data/constants";
@@ -100,7 +101,10 @@ export const AppContextProvider = ({
     defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
     backgroundConfig: DEFAULT_BACKGROUND_CONFIG,
     nodeMetadataType: DEFAULT_NODE_METADATA_TYPE,
-    ...JSON.parse(localStorage.getItem("edgitor-graph") || DEFAULT_GRAPH),
+    ...JSON.parse(
+      localStorage.getItem(url || "edgitor-graph") ||
+        (url ? EMPTY_GRAPH : DEFAULT_GRAPH)
+    ),
   });
   const [center, setCenter] = useState<Point>({ x: 0, y: -100 });
   const [scale, setScale] = useState<number>(1);
@@ -425,7 +429,7 @@ export const AppContextProvider = ({
             if (_graph.nodes[u] === undefined) {
               throw new Error("Unknown node " + u);
             }
-            if (_graph.nodes[v] === undefined) {
+            if (v !== undefined && _graph.nodes[v] === undefined) {
               throw new Error("Unknown node " + v);
             }
           });

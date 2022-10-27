@@ -68,4 +68,7 @@ const containerSx: SxProps<Theme> = {
   gap: 0.5,
   mr: 2,
   mb: 1,
+  px: 0.5,
+  borderRadius: 1,
+  background: "rgba( 255, 255, 255, 0.4)",
 };

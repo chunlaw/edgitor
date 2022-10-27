@@ -117,3 +117,14 @@ export const DEFAULT_GRAPH = JSON.stringify({
     description: "string",
   },
 } as Graph);
+
+export const EMPTY_GRAPH = JSON.stringify({
+  type: "undirected",
+  nodes: {},
+  edges: [],
+  defaultNodeConfig: DEFAULT_NODE_CONFIG,
+  defaultEdgeConfig: DEFAULT_EDGE_CONFIG,
+  nodeConfig: {},
+  backgroundConfig: DEFAULT_BACKGROUND_CONFIG,
+  nodeMetadataType: {},
+} as Graph);

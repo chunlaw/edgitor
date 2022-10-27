@@ -17,7 +17,7 @@ import { FileDownload as FileDownloadIcon } from "@mui/icons-material";
 
 const ExportController = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [tab, setTab] = useState<"SVG" | "JSON">("SVG");
+  const [tab, setTab] = useState<"SVG" | "JSON">("JSON");
   const { graph } = useContext(AppContext);
 
   const content = useMemo(() => {
@@ -56,8 +56,8 @@ const ExportController = () => {
         <DialogContent>
           <Box sx={tabbarSx}>
             <Tabs value={tab} onChange={(e, v) => setTab(v)}>
-              <Tab value="SVG" label="SVG" />
               <Tab value="JSON" label="JSON" />
+              <Tab value="SVG" label="SVG" />
             </Tabs>
             <IconButton
               onClick={() => handleDownload(`edgitor.${tab.toLowerCase()}`)}
