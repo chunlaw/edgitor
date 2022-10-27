@@ -65,13 +65,13 @@ const SvgContainer = () => {
   );
 
   const handleMouseUp = useCallback((e: MouseTouchEvent) => {
+    isDragging.current = false;
     if (selectedNodeRef.current) {
       selectedNodeRef.current.handleMouseUp(e);
       selectedNodeRef.current = null;
       return;
     }
     if (e.target !== containerRef.current) return;
-    isDragging.current = false;
   }, []);
 
   const handleWheel = useMemo(
