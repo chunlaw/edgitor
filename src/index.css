@@ -13,6 +13,10 @@ code {
     monospace;
 }
 
+svg {
+  position: fixed;
+}
+
 svg * {
   user-select: none;
 }

@@ -47,7 +47,7 @@ const ZoomController = () => {
         <AddIcon />
       </IconButton>
       <Tooltip title="Re-center">
-        <IconButton color="default" onClick={resetCenter}>
+        <IconButton color="primary" onClick={resetCenter}>
           <GpsFixedIcon />
         </IconButton>
       </Tooltip>
@@ -65,6 +65,7 @@ const containerSx: SxProps<Theme> = {
   justifyContent: "center",
   bottom: 0,
   right: 0,
-  mr: 1,
+  mr: 2,
   mb: 3,
+  gap: 1,
 };
