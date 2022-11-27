@@ -7,6 +7,7 @@ import {
   RadioButtonUnchecked as RadioButtonUncheckedIcon,
   AutoFixHigh as AutoFixHighIcon,
   Forest as ForestIcon,
+  AutoAwesome as AutoAwesomeIcon,
 } from "@mui/icons-material";
 
 const ArrangeController = () => {
@@ -50,6 +51,9 @@ const ArrangeController = () => {
         </MenuItem>
         <MenuItem onClick={() => handleClose("Tree")}>
           <ForestIcon /> Tree
+        </MenuItem>
+        <MenuItem onClick={() => handleClose("Force")}>
+          <AutoAwesomeIcon /> Force-directed
         </MenuItem>
       </Menu>
     </>

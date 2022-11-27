@@ -34,6 +34,7 @@ import {
 import { flatten, median, unflatten } from "./utils";
 import { PanelHandle } from "./components/controllers/Panel";
 import { useSearchParams } from "react-router-dom";
+import { fdd } from "./force-directed";
 
 interface AppContextState {
   scale: number;
@@ -380,6 +381,13 @@ export const AppContextProvider = ({
     });
   }, [defaultNodeConfig.radius, graph.edges]);
 
+  const setForceGraph = useCallback(() => {
+    const points = fdd({ g: graph });
+    Object.entries(points).forEach(([label, point]) => {
+      nodesRef.current[label].setCenter(point);
+    });
+  }, [graph]);
+
   const arrangeGraph = useCallback(
     (arrangement: GraphArrangement) => {
       switch (arrangement) {
@@ -392,9 +400,12 @@ export const AppContextProvider = ({
         case "Tree":
           setTreeGraph();
           break;
+        case "Force":
+          setForceGraph();
+          break;
       }
     },
-    [setCircularGraph, setGridGraph, setTreeGraph]
+    [setCircularGraph, setGridGraph, setTreeGraph, setForceGraph]
   );
 
   const loadUrl = useCallback(
