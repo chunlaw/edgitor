@@ -29,6 +29,10 @@ const containerSx: SxProps<Theme> = {
   gap: 1,
   width: "100vw",
   whiteSpace: "nowrap",
+  pointerEvents: "none",
+  "> *": {
+    pointerEvents: "auto",
+  },
   "& button": {
     mx: 1,
   },
