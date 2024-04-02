@@ -1,0 +1,123 @@
+// svg interface
+export interface Point {
+  x: number;
+  y: number;
+}
+
+export interface Edge {
+  u: Node;
+  v: Node;
+  w?: string;
+}
+
+// Context
+export interface NodeConfig {
+  radius: number;
+  fontSize: number;
+  fontColor: string;
+  color: string;
+  strokeColor: string;
+  verticalAlign: "top" | "middle" | "bottom";
+  backgroundImage: string;
+  backgroundImageAlign:
+    | "none"
+    | "xMinYMin"
+    | "xMidYMin"
+    | "xMaxYMin"
+    | "xMinYMid"
+    | "xMidYMid"
+    | "xMaxYMid"
+    | "xMinYMax"
+    | "xMidYMax"
+    | "xMaxYMax";
+  backgroundImageMeetOrSlice: "meet" | "slice";
+  animation: "fixed" | "vibrate";
+  description: string;
+}
+
+export interface EdgeConfig {
+  fontSize: number;
+  fontColor: string;
+  strokeWidth: number;
+  strokeColor: string;
+  strokeStyle: string;
+}
+
+export interface BackgroundConfig {
+  color: string;
+  imageUrl: string;
+  position: string;
+  repeat: string;
+  size: string;
+}
+
+export interface NodeMetadataTypeConfig {
+  [label: string]: "string" | "number";
+}
+
+export interface SelectedObj {
+  type: "node" | "edge";
+  label: string | number;
+}
+
+interface Metadata {
+  [key: string]: Metadata | string | number | Array;
+}
+
+// data structure
+export interface Node extends Point {
+  label: string;
+  metadata: Metadata;
+}
+
+export type GraphType = "directed" | "undirected";
+
+export type FlipType = "horizontal" | "vertical";
+
+export type RotateType = "left" | "right";
+
+export type GraphArrangement = "Circle" | "Grid" | "Tree";
+
+export interface Graph {
+  nodes: {
+    [label: string]: Node;
+  };
+  edges: Array<string[]>;
+  type: GraphType;
+  defaultNodeConfig: NodeConfig;
+  defaultEdgeConfig: EdgeConfig;
+  nodeConfig: {
+    [label: string]: {
+      radius?: number;
+      fontSize?: number;
+      fontColor?: string;
+      color?: string;
+      strokeColor?: string;
+      verticalAlign?: "top" | "middle" | "bottom";
+      backgroundImage?: string;
+      backgroundImageAlign?:
+        | "none"
+        | "xMinYMin"
+        | "xMidYMin"
+        | "xMaxYMin"
+        | "xMinYMid"
+        | "xMidYMid"
+        | "xMaxYMid"
+        | "xMinYMax"
+        | "xMidYMax"
+        | "xMaxYMax";
+      backgroundImageMeetOrSlice?: "meet" | "slice";
+      animation?: "fixed" | "vibrate";
+      description?: string;
+    };
+  };
+  backgroundConfig: BackgroundConfig;
+  nodeMetadataType: NodeMetadataTypeConfig;
+}
+
+interface MouseTouchEvent {
+  clientX: number;
+  clientY: number;
+  button?: number;
+  target: EventTarget;
+}

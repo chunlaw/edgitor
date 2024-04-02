@@ -1,0 +1,17 @@
+@media (prefers-reduced-motion: no-preference) {
+  .vibrate {
+    animation-name: Vibrate;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+}
+
+@keyframes Vibrate {
+  from {
+    transform: rotate(0deg) translateX(-0.1%) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(-0.1%) rotate(-360deg);
+  }
+}
