@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import {
   Autocomplete,
   IconButton,
@@ -120,12 +120,11 @@ const NodeGraphicTable = () => {
           <TableCell>
             <Autocomplete
               value={nodeConfig[selectedNode]?.verticalAlign ?? null}
-              onChange={(e, v) =>
+              onChange={(_, v) =>
                 updateSingleNodeConfig(selectedNode, "verticalAlign", v)
               }
               fullWidth
               size="small"
-              placeholder={defaultNodeConfig.verticalAlign}
               options={["top", "middle", "bottom"]}
               renderInput={(params) => (
                 <TextField
@@ -219,7 +218,7 @@ const NodeGraphicTable = () => {
               value={
                 nodeConfig[selectedNode]?.backgroundImageMeetOrSlice ?? null
               }
-              onChange={(e, v) =>
+              onChange={(_, v) =>
                 updateSingleNodeConfig(
                   selectedNode,
                   "backgroundImageMeetOrSlice",
@@ -228,7 +227,6 @@ const NodeGraphicTable = () => {
               }
               fullWidth
               size="small"
-              placeholder={defaultNodeConfig.backgroundImageMeetOrSlice}
               options={SVG_IMAGE_MEET_OR_SLICE}
               renderInput={(params) => (
                 <TextField
@@ -246,12 +244,11 @@ const NodeGraphicTable = () => {
           <TableCell>
             <Autocomplete
               value={nodeConfig[selectedNode]?.animation ?? null}
-              onChange={(e, v) =>
+              onChange={(_, v) =>
                 updateSingleNodeConfig(selectedNode, "animation", v)
               }
               fullWidth
               size="small"
-              placeholder={defaultNodeConfig.animation}
               options={SVG_NODE_ANIMATION}
               renderInput={(params) => (
                 <TextField

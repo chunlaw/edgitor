@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Theme } from "@emotion/react";
 import { Box, Divider, Paper, SxProps, Typography } from "@mui/material";
 import { isIOS, isMobilOrTablet, isPWA } from "../utils";

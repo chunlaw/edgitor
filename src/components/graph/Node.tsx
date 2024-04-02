@@ -100,7 +100,7 @@ const MemoNode = React.memo(
       [setCenter, scale]
     );
 
-    const handleMouseUp = useCallback((e: MouseTouchEvent) => {
+    const handleMouseUp = useCallback(() => {
       isDragging.current = false;
     }, []);
 
@@ -185,7 +185,7 @@ const MemoNode = React.memo(
     const handleTouchEnd = useCallback(
       (e: React.TouchEvent<SVGSVGElement>) => {
         if (e.touches.length === 1) {
-          handleMouseUp(e.touches[0]);
+          handleMouseUp();
         }
       },
       [handleMouseUp]

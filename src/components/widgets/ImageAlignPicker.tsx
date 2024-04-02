@@ -57,10 +57,9 @@ const ImageAlignPicker = ({
       <Autocomplete
         ref={textRef}
         value={tmpValue}
-        onChange={(e, v) => handleChange(v || "")}
+        onChange={(_, v) => handleChange(v || "")}
         fullWidth
         size="small"
-        placeholder={defaultValue}
         options={SVG_IMAGE_ALIGN}
         renderInput={(params) => (
           <TextField {...params} placeholder={defaultValue} />

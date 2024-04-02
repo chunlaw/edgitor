@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import {
   IconButton,
   MenuItem,
@@ -184,7 +184,7 @@ const NodeConfigTable = () => {
           <TableCell>
             <Select
               value={config.backgroundImageMeetOrSlice}
-              onChange={(e, v) =>
+              onChange={(e) =>
                 handleNodeConfigChange(
                   "backgroundImageMeetOrSlice",
                   e.target.value
@@ -208,7 +208,7 @@ const NodeConfigTable = () => {
           <TableCell>
             <Select
               value={config.animation}
-              onChange={(e, v) =>
+              onChange={(e) =>
                 handleNodeConfigChange("animation", e.target.value)
               }
               fullWidth

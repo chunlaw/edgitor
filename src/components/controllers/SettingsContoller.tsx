@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import {
   Box,
   Button,
@@ -51,7 +51,7 @@ const SettingsController = () => {
           </Box>
         </DialogTitle>
         <DialogContent>
-          <Tabs value={tab} onChange={(e, v) => setTab(v)}>
+          <Tabs value={tab} onChange={(_, v) => setTab(v)}>
             <Tab value="Node" label="Node" />
             <Tab value="Edge" label="Edge" />
             <Tab value="Background" label="Background" />

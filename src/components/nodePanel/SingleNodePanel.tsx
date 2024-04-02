@@ -59,7 +59,7 @@ const SingleNodePanel = () => {
         </IconButton>
       </Box>
 
-      <Tabs value={tab} onChange={(e, v) => setTab(v)}>
+      <Tabs value={tab} onChange={(_, v) => setTab(v)}>
         <Tab value="Graphic" label="Graphic" />
         <Tab value="Metadata" label="Metadata" />
       </Tabs>

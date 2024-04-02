@@ -425,7 +425,7 @@ export const AppContextProvider = ({
           throw new Error("Unknown graph type");
         }
         if (Array.isArray(_graph.edges)) {
-          _graph.edges.forEach(([u, v, w]) => {
+          _graph.edges.forEach(([u, v]) => {
             if (_graph.nodes[u] === undefined) {
               throw new Error("Unknown node " + u);
             }

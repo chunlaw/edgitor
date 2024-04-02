@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -55,7 +55,7 @@ const ExportController = () => {
         <DialogTitle>Export</DialogTitle>
         <DialogContent>
           <Box sx={tabbarSx}>
-            <Tabs value={tab} onChange={(e, v) => setTab(v)}>
+            <Tabs value={tab} onChange={(_, v) => setTab(v)}>
               <Tab value="JSON" label="JSON" />
               <Tab value="SVG" label="SVG" />
             </Tabs>

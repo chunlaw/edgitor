@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import {
   Button,
   Dialog,
@@ -43,7 +43,7 @@ const ImportController = () => {
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="lg">
         <DialogTitle>Import</DialogTitle>
         <DialogContent>
-          <Tabs value={tab} onChange={(e, v) => setTab(v)}>
+          <Tabs value={tab} onChange={(_, v) => setTab(v)}>
             <Tab value="JSON" label="JSON" />
             <Tab value="URL" label="URL" />
           </Tabs>

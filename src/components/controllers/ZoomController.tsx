@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import {
   Box,
   IconButton,
@@ -28,7 +28,7 @@ const ZoomController = () => {
         color="primary"
         size="small"
         value={100 - (100 * scale) / (ZOOM_MAX_SCALE + ZOOM_MIN_SCALE)}
-        onChange={(e, v) =>
+        onChange={(_, v) =>
           setScale(
             Number(
               Math.min(
