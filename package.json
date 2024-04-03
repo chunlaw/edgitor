@@ -10,7 +10,7 @@
     "test": "jest",
     "preview": "vite preview",
     "predeploy": "yarn build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist --remote app -t -f"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
