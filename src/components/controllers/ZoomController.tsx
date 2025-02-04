@@ -26,7 +26,6 @@ const ZoomController = () => {
       </IconButton>
       <Slider
         color="primary"
-        size="small"
         value={100 - (100 * scale) / (ZOOM_MAX_SCALE + ZOOM_MIN_SCALE)}
         onChange={(_, v) =>
           setScale(

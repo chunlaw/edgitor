@@ -12,6 +12,7 @@ import {
 import AppContext from "../../../AppContext";
 import ColorPicker from "../../widgets/ColorPicker";
 import { DEFAULT_BACKGROUND_CONFIG } from "../../../data/constants";
+import BackgroundPicker from "../../widgets/BackgroundPicker";
 
 const BackgroundConfigTable = () => {
   const { backgroundConfig, handleBackgroundConfigChange } =
@@ -39,13 +40,9 @@ const BackgroundConfigTable = () => {
             <Typography variant="body2">Background Image</Typography>
           </TableCell>
           <TableCell>
-            <TextField
+            <BackgroundPicker
               value={backgroundConfig.imageUrl}
-              size="small"
-              fullWidth
-              onChange={(e) =>
-                handleBackgroundConfigChange("imageUrl", e.target.value)
-              }
+              onChange={(v) => handleBackgroundConfigChange("imageUrl", v)}
             />
           </TableCell>
         </TableRow>
@@ -56,8 +53,6 @@ const BackgroundConfigTable = () => {
           <TableCell>
             <TextField
               value={backgroundConfig.position}
-              size="small"
-              fullWidth
               onChange={(e) =>
                 handleBackgroundConfigChange("position", e.target.value)
               }
@@ -71,8 +66,6 @@ const BackgroundConfigTable = () => {
           <TableCell>
             <TextField
               value={backgroundConfig.repeat}
-              size="small"
-              fullWidth
               onChange={(e) =>
                 handleBackgroundConfigChange("repeat", e.target.value)
               }
@@ -86,8 +79,6 @@ const BackgroundConfigTable = () => {
           <TableCell>
             <TextField
               value={backgroundConfig.size}
-              size="small"
-              fullWidth
               onChange={(e) =>
                 handleBackgroundConfigChange("size", e.target.value)
               }

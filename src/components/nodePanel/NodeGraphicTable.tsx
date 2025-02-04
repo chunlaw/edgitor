@@ -19,6 +19,7 @@ import {
 import ColorPicker from "../widgets/ColorPicker";
 import AppContext from "../../AppContext";
 import ImageAlignPicker from "../widgets/ImageAlignPicker";
+import BackgroundPicker from "../widgets/BackgroundPicker";
 
 const NodeGraphicTable = () => {
   const {
@@ -42,14 +43,12 @@ const NodeGraphicTable = () => {
           <TableCell>
             <TextField
               value={nodeConfig[selectedNode]?.radius ?? ""}
-              size="small"
               type="number"
               inputProps={{
                 step: 1,
                 min: 4,
               }}
               placeholder={`${defaultNodeConfig.radius}`}
-              fullWidth
               onChange={(e) =>
                 updateSingleNodeConfig(
                   selectedNode,
@@ -67,14 +66,12 @@ const NodeGraphicTable = () => {
           <TableCell>
             <TextField
               value={nodeConfig[selectedNode]?.fontSize ?? ""}
-              size="small"
               type="number"
               inputProps={{
                 step: 1,
                 min: 4,
               }}
               placeholder={`${defaultNodeConfig.fontSize}`}
-              fullWidth
               onChange={(e) =>
                 updateSingleNodeConfig(
                   selectedNode,
@@ -123,8 +120,6 @@ const NodeGraphicTable = () => {
               onChange={(_, v) =>
                 updateSingleNodeConfig(selectedNode, "verticalAlign", v)
               }
-              fullWidth
-              size="small"
               options={["top", "middle", "bottom"]}
               renderInput={(params) => (
                 <TextField
@@ -152,21 +147,10 @@ const NodeGraphicTable = () => {
             <Typography variant="body2">Background URL</Typography>
           </TableCell>
           <TableCell>
-            <TextField
+            <BackgroundPicker
               value={nodeConfig[selectedNode]?.backgroundImage ?? ""}
-              size="small"
-              inputProps={{
-                step: 1,
-                min: 4,
-              }}
-              placeholder={defaultNodeConfig.backgroundImage}
-              fullWidth
-              onChange={(e) =>
-                updateSingleNodeConfig(
-                  selectedNode,
-                  "backgroundImage",
-                  e.target.value
-                )
+              onChange={(v) =>
+                updateSingleNodeConfig(selectedNode, "backgroundImage", v)
               }
             />
           </TableCell>
@@ -225,8 +209,6 @@ const NodeGraphicTable = () => {
                   v
                 )
               }
-              fullWidth
-              size="small"
               options={SVG_IMAGE_MEET_OR_SLICE}
               renderInput={(params) => (
                 <TextField
@@ -247,8 +229,6 @@ const NodeGraphicTable = () => {
               onChange={(_, v) =>
                 updateSingleNodeConfig(selectedNode, "animation", v)
               }
-              fullWidth
-              size="small"
               options={SVG_NODE_ANIMATION}
               renderInput={(params) => (
                 <TextField

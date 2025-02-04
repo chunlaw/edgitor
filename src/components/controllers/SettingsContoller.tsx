@@ -39,7 +39,12 @@ const SettingsController = () => {
       >
         Settings
       </Button>
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="lg">
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
         <DialogTitle>
           <Box sx={headerSx}>
             <Typography variant="h5">Settings</Typography>

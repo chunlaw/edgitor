@@ -44,9 +44,7 @@ const ColorPicker = ({ value, defaultValue, onChange }: ColorPickerProps) => {
       <TextField
         ref={textRef}
         value={tmpValue}
-        size="small"
         placeholder={defaultValue}
-        fullWidth
         onChange={(e) => handleChange(e.target.value)}
       />
       <Popover

@@ -36,13 +36,11 @@ const NodeConfigTable = () => {
           <TableCell>
             <TextField
               value={config.radius}
-              size="small"
               type="number"
               inputProps={{
                 step: 1,
                 min: 4,
               }}
-              fullWidth
               onChange={(e) =>
                 handleNodeConfigChange("radius", parseInt(e.target.value, 10))
               }
@@ -56,13 +54,11 @@ const NodeConfigTable = () => {
           <TableCell>
             <TextField
               value={config.fontSize}
-              size="small"
               type="number"
               inputProps={{
                 step: 1,
                 min: 4,
               }}
-              fullWidth
               onChange={(e) =>
                 handleNodeConfigChange("fontSize", parseInt(e.target.value, 10))
               }
@@ -98,8 +94,6 @@ const NodeConfigTable = () => {
           <TableCell>
             <TextField
               value={config.backgroundImage}
-              size="small"
-              fullWidth
               onChange={(e) =>
                 handleNodeConfigChange("backgroundImage", e.target.value)
               }
@@ -129,8 +123,6 @@ const NodeConfigTable = () => {
               onChange={(e) =>
                 handleNodeConfigChange("verticalAlign", e.target.value)
               }
-              fullWidth
-              size="small"
             >
               <MenuItem value="top">top</MenuItem>
               <MenuItem value="middle">middle</MenuItem>
@@ -190,8 +182,6 @@ const NodeConfigTable = () => {
                   e.target.value
                 )
               }
-              fullWidth
-              size="small"
             >
               {SVG_IMAGE_MEET_OR_SLICE.map((mos) => (
                 <MenuItem key={mos} value={mos}>
@@ -211,8 +201,6 @@ const NodeConfigTable = () => {
               onChange={(e) =>
                 handleNodeConfigChange("animation", e.target.value)
               }
-              fullWidth
-              size="small"
             >
               {SVG_NODE_ANIMATION.map((ani) => (
                 <MenuItem key={`animation-${ani}`} value={ani}>

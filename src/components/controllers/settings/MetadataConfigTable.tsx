@@ -62,8 +62,6 @@ const MetadataConfigTable = () => {
             <TableCell>
               <TextField
                 value={newField.label ?? ""}
-                fullWidth
-                size="small"
                 variant="standard"
                 onChange={(e) =>
                   setNewField((prev) => ({ ...prev, label: e.target.value }))
@@ -73,7 +71,6 @@ const MetadataConfigTable = () => {
             <TableCell>
               <Select
                 value={newField.type ?? ""}
-                size="small"
                 variant="standard"
                 onChange={(e) =>
                   setNewField((prev) => ({
@@ -81,7 +78,6 @@ const MetadataConfigTable = () => {
                     type: e.target.value as "string" | "number",
                   }))
                 }
-                fullWidth
               >
                 <MenuItem value="string">string</MenuItem>
                 <MenuItem value="number">number</MenuItem>

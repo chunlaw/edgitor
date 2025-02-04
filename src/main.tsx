@@ -23,6 +23,17 @@ const theme = createTheme({
         },
       },
     },
+    MuiTextField: {
+      defaultProps: {
+        size: "small",
+        fullWidth: true,
+      },
+    },
+    MuiButton: {
+      defaultProps: {
+        size: "small",
+      },
+    },
   },
 });
 

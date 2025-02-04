@@ -64,7 +64,6 @@ const ImportController = () => {
               spellCheck="false"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              fullWidth
               placeholder="https://..."
             />
           )}

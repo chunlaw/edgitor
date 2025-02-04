@@ -31,8 +31,6 @@ const EdgeConfigTable = () => {
               onChange={(e) =>
                 handleEdgeConfigChange("strokeStyle", e.target.value)
               }
-              fullWidth
-              size="small"
             >
               <MenuItem value="none">Line</MenuItem>
               <MenuItem value="1 4">Dot</MenuItem>
@@ -47,13 +45,11 @@ const EdgeConfigTable = () => {
           <TableCell>
             <TextField
               value={defaultEdgeConfig.strokeWidth}
-              size="small"
               type="number"
               inputProps={{
                 step: 1,
                 min: 1,
               }}
-              fullWidth
               onChange={(e) =>
                 handleEdgeConfigChange(
                   "strokeWidth",
@@ -82,13 +78,11 @@ const EdgeConfigTable = () => {
           <TableCell>
             <TextField
               value={defaultEdgeConfig.fontSize}
-              size="small"
               type="number"
               inputProps={{
                 step: 1,
                 min: 4,
               }}
-              fullWidth
               onChange={(e) =>
                 handleEdgeConfigChange("fontSize", parseInt(e.target.value, 10))
               }
@@ -102,13 +96,11 @@ const EdgeConfigTable = () => {
           <TableCell>
             <TextField
               value={defaultEdgeConfig.strokeWidth}
-              size="small"
               type="number"
               inputProps={{
                 step: 1,
                 min: 1,
               }}
-              fullWidth
               onChange={(e) =>
                 handleEdgeConfigChange(
                   "strokeWidth",

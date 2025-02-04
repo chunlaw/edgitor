@@ -37,9 +37,7 @@ const MetadataTable = () => {
               <TextField
                 value={metadata?.[label] ?? ""}
                 type={type}
-                size="small"
                 multiline={type === "string"}
-                fullWidth
                 placeholder={type}
                 maxRows={4}
                 onChange={(e) => {

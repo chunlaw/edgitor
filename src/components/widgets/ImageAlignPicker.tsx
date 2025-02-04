@@ -58,8 +58,6 @@ const ImageAlignPicker = ({
         ref={textRef}
         value={tmpValue}
         onChange={(_, v) => handleChange(v || "")}
-        fullWidth
-        size="small"
         options={SVG_IMAGE_ALIGN}
         renderInput={(params) => (
           <TextField {...params} placeholder={defaultValue} />
@@ -95,14 +93,10 @@ const ImageAlignPicker = ({
           </Box>
         </Box>
         <Box sx={{ mx: 1, mb: 1 }}>
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={() => handleChange("none")}
-          >
+          <Button variant="outlined" onClick={() => handleChange("none")}>
             Scale to fit
           </Button>
-          <IconButton size="small" onClick={() => handleChange("")}>
+          <IconButton onClick={() => handleChange("")}>
             <CancelIcon />
           </IconButton>
         </Box>
