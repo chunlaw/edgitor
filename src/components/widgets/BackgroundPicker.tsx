@@ -26,7 +26,13 @@ const BackgroundPicker = ({ value, onChange }: BackgroundPickerProps) => {
         label={"Image URL/Base 64 image"}
         placeholder="https://...."
       />
-      <input ref={fileInputRef} hidden type="file" onChange={handleChange} />
+      <input
+        ref={fileInputRef}
+        hidden
+        type="file"
+        onChange={handleChange}
+        accept="image/jpeg,image/png,image/svg"
+      />
       <Button
         variant="outlined"
         sx={{ flex: "none" }}
