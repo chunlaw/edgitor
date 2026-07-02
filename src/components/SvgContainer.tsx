@@ -21,7 +21,8 @@ const SvgContainer = () => {
     useContext(AppContext);
   const { graph, edges, nodeConfig, nodesRef } = useContext(AppContext);
   const { selectedNode, unsetNode } = useContext(AppContext);
-  const { defaultNodeConfig, backgroundConfig } = useContext(AppContext);
+  const { defaultNodeConfig, backgroundConfig, resolveImage } =
+    useContext(AppContext);
   const isDragging = useRef<boolean>(false);
   const prevClickPoint = useRef<Point>({ x: 0, y: 0 });
   const prevTouchesDist = useRef<number>(0);
@@ -91,7 +92,7 @@ const SvgContainer = () => {
   const handleDoubleTouches = useMemo(
     () =>
       throttle((t1: React.Touch, t2: React.Touch) => {
-        let dist = getDistance(
+        const dist = getDistance(
           { x: t1.clientX, y: t1.clientY },
           { x: t2.clientX, y: t2.clientY }
         );
@@ -174,12 +175,12 @@ const SvgContainer = () => {
   const containerStyle: React.CSSProperties = useMemo(() => {
     return {
       backgroundColor: backgroundConfig.color,
-      backgroundImage: `url(${backgroundConfig.imageUrl})`,
+      backgroundImage: `url(${resolveImage(backgroundConfig.imageUrl)})`,
       backgroundPosition: backgroundConfig.position,
       backgroundRepeat: backgroundConfig.repeat,
       backgroundSize: backgroundConfig.size,
     };
-  }, [backgroundConfig]);
+  }, [backgroundConfig, resolveImage]);
 
   return (
     <svg
@@ -222,7 +223,8 @@ const SvgContainer = () => {
           node={node}
           config={mergeNodeConfig(
             defaultNodeConfig,
-            nodeConfig[node.label] ?? {}
+            nodeConfig[node.label] ?? {},
+            resolveImage
           )}
           onMouseDown={(e) => handleCircleMouseDown(e, node.label)}
           selected={selectedNode === node.label}
@@ -236,7 +238,8 @@ export default SvgContainer;
 
 const mergeNodeConfig = (
   base: NodeConfig,
-  config: Graph["nodeConfig"]["label"]
+  config: Graph["nodeConfig"]["label"],
+  resolveImage: (ref?: string | null) => string
 ): NodeConfig => {
   return {
     radius: config.radius ?? base.radius,
@@ -245,7 +248,10 @@ const mergeNodeConfig = (
     color: config.color ?? base.color,
     strokeColor: config.strokeColor ?? base.strokeColor,
     verticalAlign: config.verticalAlign ?? base.verticalAlign,
-    backgroundImage: config.backgroundImage ?? base.backgroundImage,
+    // Resolve idb:// references to a live object URL for rendering.
+    backgroundImage: resolveImage(
+      config.backgroundImage ?? base.backgroundImage
+    ),
     backgroundImageAlign:
       config.backgroundImageAlign ?? base.backgroundImageAlign,
     backgroundImageMeetOrSlice:

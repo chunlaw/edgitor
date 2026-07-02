@@ -20,6 +20,7 @@
     "@uiw/codemirror-themes-all": "^4.21.25",
     "@uiw/react-codemirror": "^4.21.25",
     "html-to-image": "^1.11.11",
+    "idb": "^8.0.3",
     "lodash.throttle": "^4.1.1",
     "react": "^18.2.0",
     "react-color": "^2.19.3",

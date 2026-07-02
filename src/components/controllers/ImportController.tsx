@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import AppContext from "../../AppContext";
+import { removeGraph } from "../../db";
 
 const ImportController = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -23,10 +24,12 @@ const ImportController = () => {
 
   const handleSubmit = () => {
     if (tab === "JSON") {
-      importGraph(json);
+      importGraph(json).catch((err) => console.error(err));
     } else {
+      const key = encodeURI(url);
+      removeGraph(key).catch((err) => console.error(err));
       localStorage.removeItem(url);
-      loadUrl(encodeURI(url));
+      loadUrl(key);
     }
     setOpen(false);
   };

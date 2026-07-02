@@ -3,6 +3,42 @@ import { Button, Menu, MenuItem } from "@mui/material";
 import AppContext from "../../AppContext";
 import { FileDownload as FileDownloadIcon } from "@mui/icons-material";
 import { toPng } from "html-to-image";
+import { Graph } from "../../data/type";
+import { getImage } from "../../db";
+import { isImageRef, refToId, blobToDataUrl } from "../../imageStore";
+
+// Rebuild a graph with every idb:// image reference replaced by an inline
+// base64 data URL, so the exported JSON is a self-contained, portable file.
+const inlineGraphImages = async (g: Graph): Promise<Graph> => {
+  const inline = async (v?: string): Promise<string | undefined> => {
+    if (isImageRef(v)) {
+      const blob = await getImage(refToId(v));
+      if (blob) return blobToDataUrl(blob);
+      return ""; // referenced blob missing; drop it rather than export a dead ref
+    }
+    return v;
+  };
+
+  const defaultNodeConfig = { ...g.defaultNodeConfig };
+  defaultNodeConfig.backgroundImage =
+    (await inline(defaultNodeConfig.backgroundImage)) ??
+    defaultNodeConfig.backgroundImage;
+
+  const backgroundConfig = { ...g.backgroundConfig };
+  backgroundConfig.imageUrl =
+    (await inline(backgroundConfig.imageUrl)) ?? backgroundConfig.imageUrl;
+
+  const nodeConfig: Graph["nodeConfig"] = {};
+  for (const [label, cfg] of Object.entries(g.nodeConfig ?? {})) {
+    const c = { ...cfg };
+    if (isImageRef(c.backgroundImage)) {
+      c.backgroundImage = await inline(c.backgroundImage);
+    }
+    nodeConfig[label] = c;
+  }
+
+  return { ...g, defaultNodeConfig, backgroundConfig, nodeConfig };
+};
 
 const ExportController = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -19,8 +55,9 @@ const ExportController = () => {
     []
   );
 
-  const handleDownloadJson = useCallback(() => {
-    handleDownload(`edgitor.json`, JSON.stringify(graph), "json");
+  const handleDownloadJson = useCallback(async () => {
+    const portable = await inlineGraphImages(graph);
+    handleDownload(`edgitor.json`, JSON.stringify(portable), "json");
   }, [graph, handleDownload]);
 
   const handleDownloadSvg = useCallback(() => {

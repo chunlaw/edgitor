@@ -76,7 +76,7 @@ export type FlipType = "horizontal" | "vertical";
 
 export type RotateType = "left" | "right";
 
-export type GraphArrangement = "Circle" | "Grid" | "Tree";
+export type GraphArrangement = "Circle" | "Grid" | "Tree" | "Force";
 
 export interface Graph {
   nodes: {

@@ -1,6 +1,6 @@
 import { Box, Button, TextField } from "@mui/material";
-import { useCallback, useRef } from "react";
-import { toBase64 } from "../../utils";
+import { useCallback, useContext, useRef } from "react";
+import AppContext from "../../AppContext";
 
 interface BackgroundPickerProps {
   value: string;
@@ -8,22 +8,26 @@ interface BackgroundPickerProps {
 }
 
 const BackgroundPicker = ({ value, onChange }: BackgroundPickerProps) => {
+  const { addImage } = useContext(AppContext);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleChange = useCallback(() => {
-    if (fileInputRef.current?.files?.length) {
-      toBase64(fileInputRef.current?.files[0]).then((v) => {
-        onChange(v);
-        fileInputRef.current!.value = "";
+    const file = fileInputRef.current?.files?.[0];
+    if (file) {
+      // Store the upload as a Blob in IndexedDB and keep only a lightweight
+      // idb:// reference in the graph (no more base64 bloat).
+      addImage(file).then((ref) => {
+        onChange(ref);
+        if (fileInputRef.current) fileInputRef.current.value = "";
       });
     }
-  }, []);
+  }, [addImage, onChange]);
 
   return (
     <Box sx={{ flex: 1, display: "flex", gap: 1 }}>
       <TextField
         value={value}
         onChange={({ target: { value } }) => onChange(value)}
-        label={"Image URL/Base 64 image"}
+        label={"Image URL"}
         placeholder="https://...."
       />
       <input
